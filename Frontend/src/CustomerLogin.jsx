@@ -1,12 +1,14 @@
 // src/CustomerLogin.js
 import axios from 'axios';
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const CustomerLogin = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({});
   const [success, setSuccess] = useState('');
+  const navigate = useNavigate(); // Use the useNavigate hook
 
   const validate = () => {
     let tempErrors = {};
@@ -25,16 +27,17 @@ const CustomerLogin = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (validate()) {
-      axios.post('/api/customers/login', {
+      axios.post('http://localhost:5000/api/customers/login', { // Make sure this URL is correct
         email,
         password,
       })
       .then(response => {
         localStorage.setItem('token', response.data.token);  // Store token in localStorage
         setSuccess('Login successful!');
+        navigate('/customer'); // Redirect to the customer page
       })
       .catch(error => {
-        setErrors({ ...errors, apiError: error.response.data.message });
+        setErrors({ ...errors, apiError: error.response ? error.response.data.message : 'Login failed' });
       });
     }
   };
@@ -69,8 +72,8 @@ const CustomerLogin = () => {
           <button type="submit" className="w-full py-2 px-4 bg-red-600 text-white rounded hover:bg-red-700 focus:outline-none focus:bg-red-700">
             Login
           </button>
-          <div className="text-center">
-            <a href="">Create a new Account?</a>
+          <div className="text-center mt-4">
+            <a href="/signup" className="text-blue-500 hover:underline">Create a new Account?</a>
           </div>
         </form>
       </div>

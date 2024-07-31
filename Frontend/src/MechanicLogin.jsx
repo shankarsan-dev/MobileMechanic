@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 const MechanicLogin = () => {
   const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
+  // const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({});
   const [success, setSuccess] = useState('');
@@ -13,7 +13,7 @@ const MechanicLogin = () => {
   const validate = () => {
     let tempErrors = {};
     tempErrors.email = email ? '' : 'Email is required.';
-    tempErrors.phone = phone ? '' : 'Phone number is required.';
+    //tempErrors.phone = phone ? '' : 'Phone number is required.';
     tempErrors.password = password ? '' : 'Password is required.';
 
     const emailPattern = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
@@ -30,13 +30,12 @@ const MechanicLogin = () => {
     if (validate()) {
       axios.post('http://localhost:5000/api/mechanics/login', {
         email,
-        phone,
         password,
       })
       .then(response => {
         setSuccess('Login successful!');
         setErrors({});
-        navigate('/mechanic-dashboard'); // Redirect to dashboard page
+        navigate('/mechanic-page'); // Redirect to dashboard page
       })
       .catch(error => {
         setErrors({ ...errors, apiError: error.response?.data?.message || 'An error occurred' });
@@ -58,16 +57,6 @@ const MechanicLogin = () => {
               className="w-full p-2 border border-gray-300 rounded mt-1"
             />
             {errors.email && <p className="text-red-600 text-sm mt-1">{errors.email}</p>}
-          </div>
-          <div className="mb-4">
-            <label className="block text-gray-700">Phone Number</label>
-            <input
-              type="text"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded mt-1"
-            />
-            {errors.phone && <p className="text-red-600 text-sm mt-1">{errors.phone}</p>}
           </div>
           <div className="mb-4">
             <label className="block text-gray-700">Password</label>
