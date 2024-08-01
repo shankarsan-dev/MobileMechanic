@@ -16,6 +16,4 @@ router.get('/profile', protect, (req, res) => {
     email: req.customer.email,
   });
 });
-
-
 module.exports = router;

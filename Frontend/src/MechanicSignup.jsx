@@ -6,9 +6,9 @@ const MechanicSignup = () => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
   const [errors, setErrors] = useState({});
   const [success, setSuccess] = useState('');
   const navigate = useNavigate();
@@ -18,15 +18,14 @@ const MechanicSignup = () => {
     tempErrors.firstName = firstName ? '' : 'First name is required.';
     tempErrors.lastName = lastName ? '' : 'Last name is required.';
     tempErrors.email = email ? '' : 'Email is required.';
-    tempErrors.phone = phone ? '' : 'Phone number is required.';
     tempErrors.password = password ? '' : 'Password is required.';
-    tempErrors.confirmPassword = confirmPassword ? '' : 'Confirm password is required.';
+    tempErrors.phoneNumber = phoneNumber ? '' : 'Phone number is required.';
     
     const emailPattern = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
     if (email && !emailPattern.test(email)) {
       tempErrors.email = 'Email is not valid.';
     }
-
+    
     if (password && confirmPassword && password !== confirmPassword) {
       tempErrors.confirmPassword = 'Passwords do not match.';
     }
@@ -42,13 +41,13 @@ const MechanicSignup = () => {
         firstName,
         lastName,
         email,
-        phone,
         password,
+        phoneNumber,
       })
       .then(response => {
         setSuccess('Signup successful!');
         setErrors({});
-        navigate('/mechanic-login'); // Redirect to login page
+        navigate('/mechanic-page');
       })
       .catch(error => {
         setErrors({ ...errors, apiError: error.response?.data?.message || 'An error occurred' });
@@ -57,8 +56,8 @@ const MechanicSignup = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-black">
-      <div className="max-w-md w-full bg-white p-8 rounded-lg shadow-md">
+    <div className="flex items-center justify-center min-h-screen bg-white">
+      <div className="max-w-md w-full bg-slate-50 p-8 rounded-lg shadow-md">
         <h2 className="text-2xl font-bold mb-6 text-center text-red-600">Mechanic Sign Up</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
@@ -92,16 +91,6 @@ const MechanicSignup = () => {
             {errors.email && <p className="text-red-600 text-sm mt-1">{errors.email}</p>}
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700">Phone Number</label>
-            <input
-              type="text"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded mt-1"
-            />
-            {errors.phone && <p className="text-red-600 text-sm mt-1">{errors.phone}</p>}
-          </div>
-          <div className="mb-4">
             <label className="block text-gray-700">Password</label>
             <input
               type="password"
@@ -121,13 +110,23 @@ const MechanicSignup = () => {
             />
             {errors.confirmPassword && <p className="text-red-600 text-sm mt-1">{errors.confirmPassword}</p>}
           </div>
+          <div className="mb-4">
+            <label className="block text-gray-700">Phone Number</label>
+            <input
+              type="text"
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded mt-1"
+            />
+            {errors.phoneNumber && <p className="text-red-600 text-sm mt-1">{errors.phoneNumber}</p>}
+          </div>
           {errors.apiError && <p className="text-red-600 text-sm mt-1">{errors.apiError}</p>}
           {success && <p className="text-green-600 text-sm mt-1">{success}</p>}
           <button type="submit" className="w-full py-2 px-4 bg-red-600 text-white rounded hover:bg-red-700 focus:outline-none focus:bg-red-700">
             Sign Up
           </button>
           <div className="text-center mt-4">
-            <a href="/mechanic-login" className="text-blue-600">Already have an account? Login here</a>
+            <a href="/mechanic-login" className="text-red-600 hover:text-red-800">Already have an account? Login here</a>
           </div>
         </form>
       </div>

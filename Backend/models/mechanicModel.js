@@ -23,6 +23,13 @@ const mechanicSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  longitude:{
+    type: Number
+  },
+  latitude:{
+    type: Number
+
+  }
 });
 
 // Encrypt password before saving

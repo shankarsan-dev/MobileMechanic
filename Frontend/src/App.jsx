@@ -2,6 +2,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import CustomerLogin from "./CustomerLogin";
 import CustomerPage from "./CustomerPage";
 import CustomerSignup from "./CustomerSignup";
+import MapComponent from "./MapComponent";
 import MechanicLogin from "./MechanicLogin";
 import MechanicPage from "./MechanicPage";
 import MechanicSignup from "./MechanicSignup";
@@ -36,6 +37,12 @@ const App = () => {
         element:<MechanicPage/>
   
         },
+        {
+          path: "/map-component",
+          element:<MapComponent/>
+    
+          },
+
 
   ]);
 

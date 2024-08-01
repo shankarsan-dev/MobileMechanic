@@ -1,14 +1,13 @@
-// src/CustomerLogin.js
 import axios from 'axios';
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const CustomerLogin = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({});
   const [success, setSuccess] = useState('');
-  const navigate = useNavigate(); // Use the useNavigate hook
+  const navigate = useNavigate();
 
   const validate = () => {
     let tempErrors = {};
@@ -27,14 +26,14 @@ const CustomerLogin = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (validate()) {
-      axios.post('http://localhost:5000/api/customers/login', { // Make sure this URL is correct
+      axios.post('http://localhost:5000/api/customers/login', {
         email,
         password,
       })
       .then(response => {
         localStorage.setItem('token', response.data.token);  // Store token in localStorage
         setSuccess('Login successful!');
-        navigate('/customer'); // Redirect to the customer page
+        navigate('/customer-page'); // Redirect to the customer page
       })
       .catch(error => {
         setErrors({ ...errors, apiError: error.response ? error.response.data.message : 'Login failed' });
@@ -43,8 +42,8 @@ const CustomerLogin = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-black">
-      <div className="max-w-md w-full bg-white p-8 rounded-lg shadow-md">
+    <div className="flex items-center justify-center min-h-screen bg-transparent">
+      <div className="max-w-md w-full bg-slate-50 p-8 rounded-lg shadow-md">
         <h2 className="text-2xl font-bold mb-6 text-center text-red-600">Customer Login</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
@@ -73,7 +72,7 @@ const CustomerLogin = () => {
             Login
           </button>
           <div className="text-center mt-4">
-            <a href="/signup" className="text-blue-500 hover:underline">Create a new Account?</a>
+            <Link to="/customer-signup" className="text-blue-500 hover:underline">Create a new Account?</Link>
           </div>
         </form>
       </div>

@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const CustomerSignup = () => {
   const [firstName, setFirstName] = useState('');
@@ -19,6 +19,7 @@ const CustomerSignup = () => {
     tempErrors.lastName = lastName ? '' : 'Last name is required.';
     tempErrors.email = email ? '' : 'Email is required.';
     tempErrors.password = password ? '' : 'Password is required.';
+    
     tempErrors.confirmPassword = confirmPassword ? '' : 'Confirm password is required.';
     
     const emailPattern = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
@@ -55,9 +56,9 @@ const CustomerSignup = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-black">
-      <div className="max-w-md w-full bg-white p-8 rounded-lg shadow-md">
-        <h2 className="text-2xl font-bold mb-6 text-center text-red-600">Customer Sign Up</h2>
+    <div className="flex items-center justify-center min-h-screen bg-white">
+      <div className="max-w-md w-full bg-slate-100 p-8 rounded-lg shadow-md">
+        <h2 className="text-2xl font-bold mb-6 text-center text-red-600">Customer SignUp</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label className="block text-gray-700">First Name</label>
@@ -79,6 +80,7 @@ const CustomerSignup = () => {
             />
             {errors.lastName && <p className="text-red-600 text-sm mt-1">{errors.lastName}</p>}
           </div>
+            
           <div className="mb-4">
             <label className="block text-gray-700">Email</label>
             <input
@@ -115,7 +117,7 @@ const CustomerSignup = () => {
             Sign Up
           </button>
           <div className="text-center mt-4">
-            <a href="" className="text-blue-600">Already have an account? Login here</a>
+            <Link to="/customer-login" className="text-blue-500 hover:underline">Already have an account? Login here</Link>
           </div>
         </form>
       </div>
