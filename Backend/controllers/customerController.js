@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 exports.signup = async (req, res) => {
-  const { firstName, lastName, email, password } = req.body;
+  const { firstName, lastName, email, password, address,gender,phoneNumber } = req.body;
 
   try {
     const customerExists = await Customer.findOne({ email });
@@ -18,6 +18,9 @@ exports.signup = async (req, res) => {
       lastName,
       email,
       password,
+      phoneNumber,
+      address,
+      gender
     });
 
     res.status(201).json({
@@ -25,6 +28,8 @@ exports.signup = async (req, res) => {
       firstName: customer.firstName,
       lastName: customer.lastName,
       email: customer.email,
+      address: customer.address,
+      phone: customer.phoneNumber,
       token: generateToken(customer._id),
     });
   } catch (error) {

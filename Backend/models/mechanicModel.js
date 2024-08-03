@@ -1,3 +1,5 @@
+//models/mecanicModel.js
+
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
@@ -23,13 +25,16 @@ const mechanicSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  longitude:{
-    type: Number
+  address:{
+    type: String,
+    required: true,
   },
-  latitude:{
-    type: Number
-
-  }
+  gender:{
+    type: String,
+    required: true
+  },
+  latitude: { type: Number, default: null },
+  longitude: { type: Number, default: null },
 });
 
 // Encrypt password before saving

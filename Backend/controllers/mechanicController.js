@@ -4,7 +4,8 @@ const jwt = require('jsonwebtoken');
 
 // Sign up a new mechanic
 exports.signup = async (req, res) => {
-  const { firstName, lastName, email, password, phoneNumber } = req.body;
+  const { firstName, lastName, email, password, phoneNumber, address,
+    gender} = req.body;
 
   try {
     // Check if the mechanic already exists
@@ -21,6 +22,8 @@ exports.signup = async (req, res) => {
       email,
       password,
       phoneNumber,
+      address,
+      gender
     });
 
     res.status(201).json({
@@ -29,6 +32,7 @@ exports.signup = async (req, res) => {
       lastName: mechanic.lastName,
       email: mechanic.email,
       phoneNumber: mechanic.phoneNumber,
+      address: mechanic.address,
       token: generateToken(mechanic._id),
     });
   } catch (error) {

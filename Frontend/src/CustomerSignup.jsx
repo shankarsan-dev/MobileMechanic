@@ -1,13 +1,16 @@
 import axios from 'axios';
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-
+const server = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
 const CustomerSignup = () => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [gender, setGender] = useState('');
+  const [address, setAddress] = useState('');
   const [errors, setErrors] = useState({});
   const [success, setSuccess] = useState('');
 
@@ -19,18 +22,33 @@ const CustomerSignup = () => {
     tempErrors.lastName = lastName ? '' : 'Last name is required.';
     tempErrors.email = email ? '' : 'Email is required.';
     tempErrors.password = password ? '' : 'Password is required.';
-    
     tempErrors.confirmPassword = confirmPassword ? '' : 'Confirm password is required.';
-    
+    tempErrors.phoneNumber = phoneNumber ? '' : 'Phone number is required.';
+    tempErrors.gender = gender ? '' : 'Gender is required.';
+    tempErrors.address = address ? '' : 'Address is required.';
+
     const emailPattern = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
     if (email && !emailPattern.test(email)) {
       tempErrors.email = 'Email is not valid.';
+    }
+
+    const phonePattern = /^\d{10}$/;
+    if (phoneNumber && !phonePattern.test(phoneNumber)) {
+      tempErrors.phoneNumber = 'Phone number must be exactly 10 digits and only contain numbers.';
+    }
+
+    const namePattern = /^[A-Z][a-z]*$/;
+    if (firstName && !namePattern.test(firstName)) {
+      tempErrors.firstName = 'First name must start with a capital letter and contain only letters.';
+    }
+    if (lastName && !namePattern.test(lastName)) {
+      tempErrors.lastName = 'Last name must start with a capital letter and contain only letters.';
     }
     
     if (password && confirmPassword && password !== confirmPassword) {
       tempErrors.confirmPassword = 'Passwords do not match.';
     }
-    
+
     setErrors(tempErrors);
     return Object.values(tempErrors).every(x => x === '');
   };
@@ -38,11 +56,14 @@ const CustomerSignup = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (validate()) {
-      axios.post('http://localhost:5000/api/customers/signup', {
+      axios.post(server+'/api/customers/signup', {
         firstName,
         lastName,
         email,
         password,
+        phoneNumber,
+        gender,
+        address,
       })
       .then(response => {
         setSuccess('Signup successful!');
@@ -80,7 +101,6 @@ const CustomerSignup = () => {
             />
             {errors.lastName && <p className="text-red-600 text-sm mt-1">{errors.lastName}</p>}
           </div>
-            
           <div className="mb-4">
             <label className="block text-gray-700">Email</label>
             <input
@@ -110,6 +130,40 @@ const CustomerSignup = () => {
               className="w-full p-2 border border-gray-300 rounded mt-1"
             />
             {errors.confirmPassword && <p className="text-red-600 text-sm mt-1">{errors.confirmPassword}</p>}
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700">Phone Number</label>
+            <input
+              type="text"
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded mt-1"
+            />
+            {errors.phoneNumber && <p className="text-red-600 text-sm mt-1">{errors.phoneNumber}</p>}
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700">Gender</label>
+            <select
+              value={gender}
+              onChange={(e) => setGender(e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded mt-1"
+            >
+              <option value="">Select Gender</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="other">Other</option>
+            </select>
+            {errors.gender && <p className="text-red-600 text-sm mt-1">{errors.gender}</p>}
+          </div>
+          <div className="mb-6">
+            <label className="block text-gray-700">Address</label>
+            <input
+              type="text"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded mt-1"
+            />
+            {errors.address && <p className="text-red-600 text-sm mt-1">{errors.address}</p>}
           </div>
           {errors.apiError && <p className="text-red-600 text-sm mt-1">{errors.apiError}</p>}
           {success && <p className="text-green-600 text-sm mt-1">{success}</p>}

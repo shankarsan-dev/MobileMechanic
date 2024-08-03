@@ -1,3 +1,4 @@
+// routes/mechanicRoutes.js
 const express = require('express');
 const { signup, login } = require('../controllers/mechanicController');
 const { protectMechanic } = require('../middleware/authMechanicMiddleware');
@@ -17,6 +18,6 @@ router.get('/profile', protectMechanic, (req, res) => {
     email: req.mechanic.email,
     phoneNumber: req.mechanic.phoneNumber,
   });
+  //res.end(req.mechanic.firstName);
 });
-
 module.exports = router;

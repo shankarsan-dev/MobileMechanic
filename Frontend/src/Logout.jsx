@@ -1,16 +1,16 @@
 // src/Logout.js
 import { useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const Logout = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
 
   useEffect(() => {
     localStorage.removeItem('token'); // Remove token from localStorage
-    history.push('/Role'); // Redirect to login page
-  }, [history]);
+    navigate('/'); // Redirect to Role page
+  }, [navigate]);
 
-  return null;
+  return null; // No UI to render
 };
 
 export default Logout;

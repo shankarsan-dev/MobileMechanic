@@ -1,6 +1,25 @@
-import React from 'react';
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import MapComponent from './MapComponent';
 
 const MechanicPage = () => {
+  const [location, setLocation] = useState(null);
+
+  useEffect(() => {
+    const fetchLocation = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/api/mechanics/current-location', {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        });
+        setLocation(response.data);
+      } catch (error) {
+        console.error('Error fetching location:', error);
+      }
+    };
+
+    fetchLocation();
+  }, []);
+
   return (
     <div className="min-h-screen bg-slate-50">
       <header className="bg-red-600 text-white p-4 shadow-md">
@@ -16,13 +35,20 @@ const MechanicPage = () => {
           </nav>
         </div>
       </header>
-      
+
       <main className="container mx-auto p-8">
+        {location && (
+          <section className="bg-white p-6 rounded-lg shadow-lg mb-8">
+            <h2 className="text-2xl font-bold text-gray-700 mb-4">Current Location</h2>
+            <MapComponent latitude={location.latitude} longitude={location.longitude} />
+          </section>
+        )}
+
         <section className="bg-white p-6 rounded-lg shadow-lg mb-8">
           <h2 className="text-2xl font-bold text-gray-700 mb-4">Welcome, Mechanic!</h2>
           <p className="text-gray-600">Here you can manage your services, view requests, and update your profile.</p>
         </section>
-        
+
         <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <div className="bg-white p-4 rounded-lg shadow-md">
             <h3 className="text-xl font-semibold text-gray-700 mb-2">Current Requests</h3>
@@ -38,7 +64,7 @@ const MechanicPage = () => {
           </div>
         </section>
       </main>
-      
+
       <footer className="bg-red-600 text-white p-4 mt-8">
         <div className="container mx-auto text-center">
           <p>&copy; 2024 MobileMechanic. All rights reserved.</p>

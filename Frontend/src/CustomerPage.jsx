@@ -1,6 +1,9 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
+import CustomerNav from './CustomerNav'; // Import CustomerNav
 import MapComponent from './MapComponent';
+
+const server = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
 
 const CustomerPage = () => {
   const [latitude, setLatitude] = useState(null);
@@ -15,7 +18,7 @@ const CustomerPage = () => {
         setLongitude(position.coords.longitude);
 
         try {
-          const response = await axios.get('http://localhost:5000/api/mechanics', {
+          const response = await axios.get(server + '/api/mechanics', {
             params: {
               latitude: position.coords.latitude,
               longitude: position.coords.longitude,
@@ -37,20 +40,8 @@ const CustomerPage = () => {
 
   return (
     <div className="min-h-screen bg-slate-50">
-      <header className="bg-red-600 text-white p-4 shadow-md">
-        <div className="container mx-auto flex justify-between items-center">
-          <h1 className="text-3xl font-bold">Customer Dashboard</h1>
-          <nav>
-            <ul className="flex space-x-4">
-              <li><a href="#" className="hover:text-gray-200">Home</a></li>
-              <li><a href="#" onClick={handleFindMechanicClick} className="hover:text-gray-200">Find Mechanic</a></li>
-              <li><a href="#" className="hover:text-gray-200">Profile</a></li>
-              <li><a href="#" className="hover:text-gray-200">Logout</a></li>
-            </ul>
-          </nav>
-        </div>
-      </header>
-
+      <CustomerNav /> {/* Use CustomerNav component */}
+      
       <main className="container mx-auto p-8">
         <section className="bg-white p-6 rounded-lg shadow-lg mb-8">
           <h2 className="text-2xl font-bold text-gray-700 mb-4">Welcome, Customer!</h2>
@@ -65,7 +56,7 @@ const CustomerPage = () => {
         )}
 
         <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div className="bg-white p-4 rounded-lg shadow-md"  onClick={handleFindMechanicClick}>
+          <div className="bg-white p-4 rounded-lg shadow-md" onClick={handleFindMechanicClick}>
             <h3 className="text-xl font-semibold text-gray-700 mb-2">Find a Mechanic</h3>
             <p className="text-gray-600">Search for nearby mechanics and request services.</p>
           </div>
