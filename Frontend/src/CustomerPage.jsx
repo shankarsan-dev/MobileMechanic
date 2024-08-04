@@ -95,8 +95,6 @@ const CustomerPage = () => {
   //const [customerId, setCustomerId] = useState('');
 
   const token = localStorage.getItem('token');
-
-  // Extract mechanic ID from token
   const customerId = token ? jwtDecode(token).id : null;
   console.log(customerId);
 
