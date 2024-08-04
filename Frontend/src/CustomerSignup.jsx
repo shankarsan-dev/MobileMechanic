@@ -66,8 +66,11 @@ const CustomerSignup = () => {
         address,
       })
       .then(response => {
+
         setSuccess('Signup successful!');
+        
         setErrors({});
+        localStorage.setItem('token', response.data.token); 
         navigate('/customer-page'); // Redirect to CustomerPage after successful signup
       })
       .catch(error => {

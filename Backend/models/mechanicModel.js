@@ -1,7 +1,7 @@
 //models/mecanicModel.js
 
-const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
+const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
 
 const mechanicSchema = new mongoose.Schema({
   firstName: {
@@ -24,28 +24,35 @@ const mechanicSchema = new mongoose.Schema({
   phoneNumber: {
     type: String,
     required: true,
+    unique: true,
   },
-  address:{
+  address: {
     type: String,
     required: true,
   },
-  gender:{
+  gender: {
     type: String,
-    required: true
+    required: true,
   },
+
   latitude: { type: Number, default: null },
+
   longitude: { type: Number, default: null },
+
+  socketId: { type: String, default: null },
+  
+  available: { type: Boolean, default: false },
 });
 
 // Encrypt password before saving
-mechanicSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) {
+mechanicSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) {
     next();
   }
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
 });
 
-const Mechanic = mongoose.model('Mechanic', mechanicSchema);
+const Mechanic = mongoose.model("Mechanic", mechanicSchema);
 
 module.exports = Mechanic;

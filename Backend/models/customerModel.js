@@ -38,6 +38,8 @@ const customerSchema = new mongoose.Schema({
   latitude: {
     type: Number,
   },
+  socketId: { type: String, default: null },
+  available: { type: Boolean, default: false }, 
 });
 
 // Encrypt password before saving

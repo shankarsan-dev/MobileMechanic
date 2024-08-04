@@ -24,10 +24,10 @@ const CustomerNav = () => {
         <h1 className="text-3xl font-bold">Customer Dashboard</h1>
         <nav>
           <ul className="flex space-x-4">
-            <li><a href="#" onClick={() => navigate('/')} className="hover:text-gray-200">Home</a></li>
-            <li><a href="#" onClick={handleFindMechanicClick} className="hover:text-gray-200">Find Mechanic</a></li>
-            <li><a href="#" onClick={handleProfileClick} className="hover:text-gray-200">Profile</a></li>
-            <li><a href="#" onClick={handleLogoutClick} className="hover:text-gray-200">Logout</a></li>
+            <li onClick={() => navigate('/customer-page')} className="hover:text-gray-200 cursor-pointer">Home</li>
+            <li onClick={handleFindMechanicClick} className="hover:text-gray-200 cursor-pointer" >Find Mechanic</li>
+            <li onClick={handleProfileClick} className="hover:text-gray-200 cursor-pointer">Profile</li>
+            <li onClick={handleLogoutClick} className="hover:text-gray-200 cursor-pointer">Logout</li>
           </ul>
         </nav>
       </div>
