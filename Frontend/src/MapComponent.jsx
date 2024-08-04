@@ -1,36 +1,56 @@
-  // frontend/src/MapComponent.js
-  import L from 'leaflet';
-import 'leaflet/dist/leaflet.css';
-import React from 'react';
-import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
-  
-  delete L.Icon.Default.prototype._getIconUrl;
-  L.Icon.Default.mergeOptions({
-    iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
-    iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
-  });
-  
-  const MapComponent = ({ latitude, longitude, mechanics }) => {
-    const location = [latitude, longitude];
-  
-    return (
-      <MapContainer center={location} zoom={13} style={{ height: '80vh', width: '100%' }}>
-        <TileLayer
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        />
-        <Marker position={location}>
-          <Popup>You are here</Popup>
-        </Marker>
-        {mechanics.map((mechanic) => (
-          <Marker key={mechanic._id} position={mechanic.location.coordinates.reverse()}>
-            <Popup>{mechanic.name}</Popup>
-          </Marker>
-        ))}
-      </MapContainer>
-    );
-  };
-  
-  export default MapComponent;
-  
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css'; // Import Leaflet CSS
+import React, { useEffect, useRef } from 'react';
+
+const MapComponent = ({ latitude, longitude, mechanics }) => {
+  const mapRef = useRef(null);
+
+  useEffect(() => {
+    // Initialize the map if not already initialized
+    if (!mapRef.current) {
+      mapRef.current = L.map('map', {
+        center: [latitude, longitude],
+        zoom: 12,
+      });
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      }).addTo(mapRef.current);
+    } else {
+      // Update the map center if map is already initialized
+      mapRef.current.setView([latitude, longitude], 12);
+    }
+
+    // Clear previous markers
+    mapRef.current.eachLayer((layer) => {
+      if (layer instanceof L.Marker) {
+        mapRef.current.removeLayer(layer);
+      }
+    });
+
+    // Add a marker for the customer's location
+    L.marker([latitude, longitude])
+      .addTo(mapRef.current)
+      .bindPopup('Your location')
+      .openPopup();
+
+    // Add markers for each mechanic
+    mechanics.forEach((mechanic) => {
+      const { firstName, lastName, latitude: mechLat, longitude: mechLng } = mechanic;
+      if (mechLat && mechLng) {
+        L.marker([mechLat, mechLng])
+          .addTo(mapRef.current)
+          .bindPopup(`<b>${firstName} ${lastName}</b>`)
+          .openPopup();
+          console.log(firstName);
+      }
+    });
+
+  }, [latitude, longitude, mechanics]);
+
+  return (
+    <div id="map" style={{ height: '600px', width: '100%' }}></div>
+  );
+};
+
+export default MapComponent;

@@ -107,13 +107,10 @@ const CustomerPage = () => {
         setLongitude(position.coords.longitude);
 
         try {
-          const response = await axios.get(`${server}/api/mechanics/available`, {
-            params: {
-              latitude: position.coords.latitude,
-              longitude: position.coords.longitude,
-            },
+          const response = await axios.get(`${server}/api/customers/availableMech`, {
           });
           setMechanics(response.data);
+          console.log(response.data);
         } catch (error) {
           console.error('Error fetching available mechanics:', error);
         }

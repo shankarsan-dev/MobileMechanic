@@ -1,6 +1,7 @@
 // middleware/authMiddleware.js
 const jwt = require('jsonwebtoken');
 const Customer = require('../models/customerModel');
+const Mechanic = require("../models/mechanicModel");
 
 const protect = async (req, res, next) => {
   let token;
