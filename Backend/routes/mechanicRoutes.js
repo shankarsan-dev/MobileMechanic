@@ -20,22 +20,7 @@ router.get('/profile', protectMechanic, (req, res) => {
   });
   //res.end(req.mechanic.firstName);
 });
-// Fetch available mechanics
-router.get('/available', async (req, res) => {
-  try {
-    const mechanics = await Mechanic.find({ available: true });
-    res.json ({_id: req.mechanic._id,
-      firstName: req.mechanic.firstName,
-      lastName: req.mechanic.lastName,
-      email: req.mechanic.email,
-      phoneNumber: req.mechanic.phoneNumber,
-      longitude: req.mechanic.longitude,
-      latitude: req.mechanics.latitude
-    });
-  } catch (error) {
-    res.status(500).json({ message: 'Server error' });
-  }
-});
+
 
 
 

@@ -77,13 +77,13 @@
 //   );
 // };
 
-// export default CustomerPage;
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import React, { useEffect, useState } from 'react';
 import io from 'socket.io-client';
 import CustomerNav from './CustomerNav';
 import MapComponent from './MapComponent';
+
 const server = 'http://localhost:5000';
 const socket = io(server);
 
@@ -92,11 +92,9 @@ const CustomerPage = () => {
   const [longitude, setLongitude] = useState(null);
   const [mechanics, setMechanics] = useState([]);
   const [showMap, setShowMap] = useState(false);
-  //const [customerId, setCustomerId] = useState('');
 
   const token = localStorage.getItem('token');
   const customerId = token ? jwtDecode(token).id : null;
-  console.log(customerId);
 
   useEffect(() => {
     if (showMap && customerId) {
@@ -104,31 +102,37 @@ const CustomerPage = () => {
         setLatitude(position.coords.latitude);
         setLongitude(position.coords.longitude);
 
-        try {
-          const response = await axios.get(`${server}/api/customers/availableMech`, {
-          });
-          setMechanics(response.data);
-          console.log(response.data);
-        } catch (error) {
-          console.error('Error fetching available mechanics:', error);
-        }
+        const fetchMechanics = async () => {
+          try {
+            const response = await axios.get(`${server}/api/customers/availableMech`);
+            setMechanics(response.data);
+          } catch (error) {
+            console.error('Error fetching available mechanics:', error);
+          }
+        };
+
+        fetchMechanics();
+
+        // Set up an interval to fetch mechanics every 5 seconds
+        const intervalId = setInterval(fetchMechanics, 5000);
+
+        // Emit event to set customer as available
+        socket.emit('CsetAvailable', { customerId, latitude: position.coords.latitude, longitude: position.coords.longitude });
+
+        // Socket.IO event handlers
+        socket.on('updateMechanics', (updatedMechanics) => {
+          setMechanics(updatedMechanics);
+        });
+
+        // Clean up on component unmount
+        return () => {
+          clearInterval(intervalId);
+          socket.emit('CsetUnavailable', customerId);
+          socket.off('updateMechanics');
+        };
       }, (error) => {
         console.error('Error getting location:', error);
       });
-
-      // Emit event to set customer as available
-      socket.emit('CsetAvailable', customerId); // Emit customerId to set as available
-
-      // Socket.IO event handlers
-      socket.on('updateMechanics', (updatedMechanics) => {
-        setMechanics(updatedMechanics);
-      });
-
-      // Clean up on component unmount
-      return () => {
-        socket.emit('CsetUnavailable', customerId); // Emit event to set customer as unavailable on disconnect
-        socket.off('updateMechanics');
-      };
     }
   }, [showMap, customerId]);
 
