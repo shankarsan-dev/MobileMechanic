@@ -30,6 +30,31 @@ mongoose.connect('mongodb://127.0.0.1:27017/mobileMechanic', {
 
 app.use('/api/customers', customerRoutes);
 app.use('/api/mechanics', mechanicRoutes);
+// Backend route to update mechanic's location
+app.post('/api/mechanics/updateLocation', async (req, res) => {
+  const { mechanicId, latitude, longitude } = req.body;
+  console.log(mechanicId);
+  console.log('Received data:', { mechanicId, latitude, longitude });
+
+  try {
+    const updateResult = await Mechanic.updateOne(
+      { _id: mechanicId },
+      { $set: { latitude: latitude, longitude: longitude } }
+    );
+   
+    console.log('Update Result:', updateResult);
+
+    if (updateResult.nModified === 0) {
+      return res.status(404).json({ error: 'Mechanic not found or location unchanged' });
+    }
+
+    res.status(200).json({ message: 'Location updated successfully' });
+  } catch (error) {
+    console.error('Error updating location:', error);
+    res.status(500).json({ error: 'Failed to update location' });
+  }
+});
+
 
 io.on('connection', (socket) => {
   console.log('New client connected:', socket.id);

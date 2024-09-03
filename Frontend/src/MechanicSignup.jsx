@@ -68,7 +68,7 @@ const CustomerSignup = () => {
       .then(response => {
         setSuccess('Signup successful!');
         setErrors({});
-        navigate('/customer-page'); // Redirect to CustomerPage after successful signup
+        navigate('/mechanic-page'); // Redirect to CustomerPage after successful signup
       })
       .catch(error => {
         setErrors({ ...errors, apiError: error.response?.data?.message || 'An error occurred' });

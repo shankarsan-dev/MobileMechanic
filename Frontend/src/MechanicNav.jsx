@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const MechanicNav = () => {
   const navigate = useNavigate();
@@ -15,9 +15,9 @@ const MechanicNav = () => {
         <h1 className="text-3xl font-bold">Mechanic Dashboard</h1>
         <nav>
           <ul className="flex space-x-4">
-            <li><a href="#" className="hover:text-gray-200">Home</a></li>
-            <li><a href="#" className="hover:text-gray-200">Services</a></li>
-            <li><a href="#" className="hover:text-gray-200">Profile</a></li>
+            <li><Link to="/mechanic-page" className="hover:text-gray-200">Home</Link></li>
+            {/* <li><a href="#" className="hover:text-gray-200">Services</a></li> */}
+            <li className="hover:text-gray-200"> <Link to = "/mechanic-page/profile">Profile</Link></li>
             <li><a href="#" onClick={handleLogoutClick} className="hover:text-gray-200">Logout</a></li>
           </ul>
         </nav>

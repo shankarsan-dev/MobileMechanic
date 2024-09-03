@@ -2,7 +2,7 @@ import axios from 'axios';
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 const server =  'http://localhost:5000';
-const CustomerLogin = () => {
+const MechanicLogin = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({});
@@ -79,4 +79,4 @@ const CustomerLogin = () => {
   );
 };
 
-export default CustomerLogin;
+export default MechanicLogin;

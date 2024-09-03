@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-const server = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
+const server =  'http://localhost:5000';
 const CustomerSignup = () => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');

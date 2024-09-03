@@ -6,9 +6,12 @@ import CustomerProfile from "./CustomerProfile";
 import CustomerSignup from "./CustomerSignup";
 import MapComponent from "./MapComponent";
 import MechanicLogin from "./MechanicLogin";
+import MechanicNav from "./MechanicNav";
 import MechanicPage from "./MechanicPage";
+import MechanicProfile from "./MechanicProfile";
 import MechanicSignup from "./MechanicSignup";
 import Role from "./Role";
+import SimpleMap from "./simplemap";
 
 
 const App = () => {
@@ -41,7 +44,7 @@ const App = () => {
     },
     {
       path: "/mechanic-page",
-      element: <MechanicPage />
+      element:<><MechanicPage/>  </>
     },
     {
       path: "/map-component",
@@ -55,6 +58,16 @@ const App = () => {
       path: "/customer-page/profile",
 
       element: <><CustomerNav/><CustomerProfile /> </>
+    },
+    {
+      path: "/mechanic-page/profile",
+
+      element: <><MechanicNav/><MechanicProfile /> </>
+    },
+    {
+      path: "/simplemap",
+
+      element: <><SimpleMap></SimpleMap> </>
     }
   ]);
 

@@ -42,6 +42,7 @@ const mechanicSchema = new mongoose.Schema({
   socketId: { type: String, default: null },
   
   available: { type: Boolean, default: false },
+  serviceCharge: { type: Number, min: 100, max: 10000  }
 });
 
 // Encrypt password before saving
@@ -52,6 +53,7 @@ mechanicSchema.pre("save", async function (next) {
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
 });
+
 
 const Mechanic = mongoose.model("Mechanic", mechanicSchema);
 
