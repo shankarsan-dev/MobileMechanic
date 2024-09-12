@@ -133,7 +133,6 @@ io.on('connection', (socket) => {
       const updatedCustomer = await Customer.findById(customerId);
   // // Customer availability events
   // socket.on('CsetAvailable', async (customerId) => {
-  //   try {
 
   //     const result = await Customer.updateOne(
   //       { _id: customerId },
