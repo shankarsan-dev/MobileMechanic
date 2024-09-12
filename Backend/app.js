@@ -125,22 +125,30 @@ io.on('connection', (socket) => {
     }
   });
 
-  // Customer availability events
-  socket.on('CsetAvailable', async (customerId) => {
-    try {
-      const result = await Customer.updateOne(
         { _id: customerId },
         { $set: { available: true, socketId: socket.id } }
       );
       console.log(`Customer ${customerId} update result:`, result);
 
       const updatedCustomer = await Customer.findById(customerId);
-      console.log(`Customer ${customerId} after update:`, updatedCustomer);
+  // // Customer availability events
+  // socket.on('CsetAvailable', async (customerId) => {
+  //   try {
+
+  //     const result = await Customer.updateOne(
+  //       { _id: customerId },
+  //       { $set: { available: true, socketId: socket.id } }
+  //     );
+  //     console.log(`Customer ${customerId} update result:`, result);
+
+  //     const updatedCustomer = await Customer.findById(customerId);
+  //     console.log(`Customer ${customerId} after update:`, updatedCustomer);
       
-    } catch (error) {
-      console.error('Error setting customer as available:', error);
-    }
-  });
+  //   } catch (error) {
+  //     console.error('Error setting customer as available:', error);
+  //   }
+  // });
+ 
 
   socket.on('CsetUnavailable', async (customerId) => {
     try {

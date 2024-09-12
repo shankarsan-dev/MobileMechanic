@@ -106,9 +106,6 @@ import 'leaflet/dist/leaflet.css';
 import React, { useEffect, useRef, useState } from 'react';
 import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
 
-const token = localStorage.getItem('token');
-  const mId = token ? jwtDecode(token).id : null;
-  console.log(mId)
 const DraggableMarker = ({ position, onDragEnd }) => {
   const markerRef = useRef(null);
 
@@ -138,9 +135,23 @@ const MechanicMapComponent = () => {
   const [position, setPosition] = useState(null); // Position is initially null
   const [latitude, setLatitude] = useState(null);
   const [longitude, setLongitude] = useState(null);
-
+  const [mId, setMId] = useState(null); // Store mechanic ID
 
   useEffect(() => {
+    // Retrieve the token from localStorage and decode the mechanic ID
+    const token = localStorage.getItem('token');
+    if (token) {
+      try {
+        const decodedToken = jwtDecode(token);
+        setMId(decodedToken.id); // Set mechanic ID
+        console.log('Mechanic ID:', decodedToken.id);
+      } catch (error) {
+        console.error('Error decoding token:', error);
+      }
+    } else {
+      console.error('No token found in localStorage');
+    }
+
     // Get the user's current position
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition((pos) => {
@@ -148,20 +159,23 @@ const MechanicMapComponent = () => {
         setPosition([latitude, longitude]);
         setLatitude(latitude);
         setLongitude(longitude);
-        // Optionally update the initial position in the database
-        updateLocationInDatabase(latitude, longitude);
+
+        // Update location in the database only if mechanic ID is available
+        if (decodedToken && decodedToken.id) {
+          updateLocationInDatabase(latitude, longitude, decodedToken.id);
+        }
       });
     }
   }, []);
 
-  const updateLocationInDatabase = async (lat, lng) => {
+  const updateLocationInDatabase = async (lat, lng, mId) => {
     try {
       await axios.post('http://localhost:5000/api/mechanics/updateLocation', {
-        mechanicId:mId,
+        mechanicId: mId, // Ensure mechanicId is passed
         latitude: lat,
         longitude: lng,
       });
-      console.log('Location updated in database');
+      console.log('Location updated in database for mechanic ID:', mId);
     } catch (error) {
       console.error('Error updating location in database:', error);
     }
@@ -174,7 +188,9 @@ const MechanicMapComponent = () => {
     console.log(`Marker moved to: Latitude ${newPosition.lat}, Longitude ${newPosition.lng}`);
 
     // Update the mechanic's location in the database
-    updateLocationInDatabase(newPosition.lat, newPosition.lng);
+    if (mId) {
+      updateLocationInDatabase(newPosition.lat, newPosition.lng, mId);
+    }
   };
 
   return (
