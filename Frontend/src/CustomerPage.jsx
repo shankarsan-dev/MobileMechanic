@@ -115,9 +115,9 @@ const CustomerPage = () => {
 
         // Set up an interval to fetch mechanics every 5 seconds
         const intervalId = setInterval(fetchMechanics, 5000);
-
+          console.log("customer id ="+customerId);
         // Emit event to set customer as available
-        socket.emit('CsetAvailable', { customerId, latitude: position.coords.latitude, longitude: position.coords.longitude });
+        socket.emit('CsetAvailable', customerId);
 
         // Socket.IO event handlers
         socket.on('updateMechanics', (updatedMechanics) => {
