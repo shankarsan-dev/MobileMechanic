@@ -33,6 +33,7 @@ app.use('/api/mechanics', mechanicRoutes);
 // Backend route to update mechanic's location
 app.post('/api/mechanics/updateLocation', async (req, res) => {
   const { mechanicId, latitude, longitude } = req.body;
+  
   console.log(mechanicId);
   console.log('Received data:', { mechanicId, latitude, longitude });
 
@@ -55,6 +56,30 @@ app.post('/api/mechanics/updateLocation', async (req, res) => {
   }
 });
 
+app.post('/api/customers/updateLocation', async (req, res) => {
+  const { customerId, latitude, longitude } = req.body;
+  
+  console.log(customerId);
+  console.log('Received data:', { customerId, latitude, longitude });
+
+  try {
+    const updateResult = await Customer.updateOne(
+      { _id: customerId },
+      { $set: { latitude: latitude, longitude: longitude } }
+    );
+   
+    console.log('Update Result:', updateResult);
+
+    if (updateResult.nModified === 0) {
+      return res.status(404).json({ error: 'Mechanic not found or location unchanged' });
+    }
+
+    res.status(200).json({ message: 'Location updated successfully' });
+  } catch (error) {
+    console.error('Error updating location:', error);
+    res.status(500).json({ error: 'Failed to update location' });
+  }
+});
 
 io.on('connection', (socket) => {
   console.log('New client connected:', socket.id);
@@ -125,28 +150,23 @@ io.on('connection', (socket) => {
     }
   });
 
+  // Customer availability events
+  socket.on('CsetAvailable', async (customerId) => {
+    try {
+      console.log("customer id : "+ customerId)
+      const result = await Customer.updateOne(
         { _id: customerId },
         { $set: { available: true, socketId: socket.id } }
       );
       console.log(`Customer ${customerId} update result:`, result);
 
       const updatedCustomer = await Customer.findById(customerId);
-  // // Customer availability events
-  // socket.on('CsetAvailable', async (customerId) => {
-
-  //     const result = await Customer.updateOne(
-  //       { _id: customerId },
-  //       { $set: { available: true, socketId: socket.id } }
-  //     );
-  //     console.log(`Customer ${customerId} update result:`, result);
-
-  //     const updatedCustomer = await Customer.findById(customerId);
-  //     console.log(`Customer ${customerId} after update:`, updatedCustomer);
+      console.log(`Customer ${customerId} after update:`, updatedCustomer);
       
-  //   } catch (error) {
-  //     console.error('Error setting customer as available:', error);
-  //   }
-  // });
+    } catch (error) {
+      console.error('Error setting customer as available:', error);
+    }
+  });
  
 
   socket.on('CsetUnavailable', async (customerId) => {
