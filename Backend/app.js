@@ -7,6 +7,8 @@ const customerRoutes = require('./routes/customerRoutes');
 const mechanicRoutes = require('./routes/mechanicRoutes');
 const Mechanic = require('./models/mechanicModel');
 const Customer = require('./models/customerModel');
+const Service = require('./models/ServiceModel');
+const serviceRoutes = require("./routes/serviceRoutes");
 require('dotenv').config();
 
 const app = express();
@@ -30,7 +32,45 @@ mongoose.connect('mongodb://127.0.0.1:27017/mobileMechanic', {
 
 app.use('/api/customers', customerRoutes);
 app.use('/api/mechanics', mechanicRoutes);
+// app.use("/api/requests",serviceRoutes);
 // Backend route to update mechanic's location
+
+app.post('/api/requests', async (req, res) => {
+  const {  mechanicId,
+    customerId, latitude,longitude,
+    vehicleType,
+    description} = req.body;
+    
+console.log(customerId);
+  try {
+    const service = new Service({
+      customerId,
+      mechanicId,
+      vehicleType,
+      description,
+    });
+    await service.save();
+
+    const mechanic = await Mechanic.findById(mechanicId);
+    if (!mechanic) {
+      return res.status(404).json({ message: 'Mechanic not found' });
+    }
+    console.log("mechanic socketid:"+mechanic.socketId);
+    io.to(mechanic.socketId).emit('newRequest', {
+      serviceId: service._id,
+      customerId,
+      vehicleType,
+      description,
+      location: { latitude, longitude }
+    });
+    
+    res.status(201).json({ message: 'Request sent and mechanic notified', service });
+  } catch (error) {
+    console.error('Error creating service request:', error.message);
+    res.status(500).json({ error: 'Internal Server Error', details: error.message });
+  }
+});
+
 app.post('/api/mechanics/updateLocation', async (req, res) => {
   const { mechanicId, latitude, longitude } = req.body;
   
