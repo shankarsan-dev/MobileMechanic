@@ -34,6 +34,33 @@ app.use('/api/customers', customerRoutes);
 app.use('/api/mechanics', mechanicRoutes);
 // app.use("/api/requests",serviceRoutes);
 // Backend route to update mechanic's location
+// In your backend (Node.js/Express)
+// Route to get mechanic location
+app.get('/api/mechanics/location/:id', async (req, res) => {
+  try {
+    const mechanic = await Mechanic.findById(req.params.id);
+    if (!mechanic) {
+      return res.status(404).json({ message: 'Mechanic not found' });
+    }
+    res.json({ latitude: mechanic.latitude, longitude: mechanic.longitude });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error });
+  }
+});
+
+// Route to get customer location
+app.get('/api/customers/location/:id', async (req, res) => {
+  try {
+    const customer = await Customer.findById(req.params.id);
+    if (!customer) {
+      return res.status(404).json({ message: 'Customer not found' });
+    }
+    res.json({ latitude: customer.latitude, longitude: customer.longitude });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error });
+  }
+});
+
 
 app.post('/api/requests', async (req, res) => {
   const {  mechanicId,
@@ -61,7 +88,6 @@ console.log(customerId);
       customerId,
       vehicleType,
       description,
-      location: { latitude, longitude }
     });
     
     res.status(201).json({ message: 'Request sent and mechanic notified', service });
@@ -71,28 +97,37 @@ console.log(customerId);
   }
 });
 
-app.post('/api/mechanics/updateLocation', async (req, res) => {
-  const { mechanicId, latitude, longitude } = req.body;
-  
-  console.log(mechanicId);
-  console.log('Received data:', { mechanicId, latitude, longitude });
+app.post('/api/services/accept', async (req, res) => {
+  const { serviceId, mechanicId, customerId } = req.body;
 
   try {
-    const updateResult = await Mechanic.updateOne(
-      { _id: mechanicId },
-      { $set: { latitude: latitude, longitude: longitude } }
+    const service = await Service.findByIdAndUpdate(
+      serviceId,
+      { status: 'accepted' }, 
+      { new: true }
     );
-   
-    console.log('Update Result:', updateResult);
 
-    if (updateResult.nModified === 0) {
-      return res.status(404).json({ error: 'Mechanic not found or location unchanged' });
+    if (!service) {
+      return res.status(404).json({ message: 'Service request not found' });
     }
 
-    res.status(200).json({ message: 'Location updated successfully' });
+    // Notify the customer of the acceptance
+    const customer = await Customer.findById(customerId);
+    if (!customer) {
+      return res.status(404).json({ message: 'Customer not found' });
+    }
+
+    // Send notification to the customer
+    io.to(customer.socketId).emit('requestAccepted', {
+      serviceId,
+      mechanicId,
+      message: 'Your request has been accepted by the mechanic.',
+    });
+
+    res.status(200).json({ message: 'Request accepted successfully', service });
   } catch (error) {
-    console.error('Error updating location:', error);
-    res.status(500).json({ error: 'Failed to update location' });
+    console.error('Error accepting service request:', error.message);
+    res.status(500).json({ error: 'Internal Server Error', details: error.message });
   }
 });
 
@@ -121,6 +156,30 @@ app.post('/api/customers/updateLocation', async (req, res) => {
   }
 });
 
+app.post('/api/mechanics/updateLocation', async (req, res) => {
+  const { mechanicId, latitude, longitude } = req.body;
+  
+  console.log(mechanicId);
+  console.log('Received data:', { mechanicId, latitude, longitude });
+
+  try {
+    const updateResult = await Mechanic.updateOne(
+      { _id: mechanicId },
+      { $set: { latitude: latitude, longitude: longitude } }
+    );
+   
+    console.log('Update Result:', updateResult);
+
+    if (updateResult.nModified === 0) {
+      return res.status(404).json({ error: 'Mechanic not found or location unchanged' });
+    }
+
+    res.status(200).json({ message: 'Location updated successfully' });
+  } catch (error) {
+    console.error('Error updating location:', error);
+    res.status(500).json({ error: 'Failed to update location' });
+  }
+});
 io.on('connection', (socket) => {
   console.log('New client connected:', socket.id);
 
