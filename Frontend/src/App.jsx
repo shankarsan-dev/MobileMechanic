@@ -11,7 +11,7 @@ import MechanicPage from "./MechanicPage";
 import MechanicProfile from "./MechanicProfile";
 import MechanicSignup from "./MechanicSignup";
 import Role from "./Role";
-import SimpleMap from "./simplemap";
+import ServiceStatus from "./ServiceStatus";
 
 
 const App = () => {
@@ -64,11 +64,12 @@ const App = () => {
 
       element: <><MechanicNav/><MechanicProfile /> </>
     },
+  
     {
-      path: "/simplemap",
+      path: "/service-status",
 
-      element: <><SimpleMap></SimpleMap> </>
-    }
+      element: <ServiceStatus/>
+    },
   ]);
 
   return (

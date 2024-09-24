@@ -8,7 +8,6 @@ const mechanicRoutes = require('./routes/mechanicRoutes');
 const Mechanic = require('./models/mechanicModel');
 const Customer = require('./models/customerModel');
 const Service = require('./models/ServiceModel');
-const serviceRoutes = require("./routes/serviceRoutes");
 require('dotenv').config();
 
 const app = express();
@@ -16,7 +15,7 @@ const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
     origin: '*',
-    methods: ['GET', 'POST'],
+    methods: ['GET', 'POST','PUT'],
   },
 });
 
@@ -36,6 +35,71 @@ app.use('/api/mechanics', mechanicRoutes);
 // Backend route to update mechanic's location
 // In your backend (Node.js/Express)
 // Route to get mechanic location
+app.get('/api/services/:serviceId/details', async (req, res) => {
+  try {
+    // Populate mechanic and customer details in the service document
+    const service = await Service.findOne({ _id: req.params.serviceId })
+      .populate('customerId', 'firstName lastName email phoneNumber') // Get specific customer details
+      .populate('mechanicId', 'firstName lastName email phoneNumber'); // Get specific mechanic details
+
+    if (!service) {
+      return res.status(404).json({ message: 'Service not found' });
+    }
+
+    res.json(service);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+app.put('/api/services/:serviceId/status', async (req, res) => {
+  try {
+  
+    const serviceId = req.params.serviceId;
+    const { status } = req.body;
+
+    // Update the service status
+    const updatedService = await Service.findByIdAndUpdate(
+      serviceId,
+      { status },
+      { new: true } // Return the updated document
+    );
+
+    if (!updatedService) {
+      return res.status(404).json({ message: 'Service not found' });
+    }
+
+    // Get the customerId to send the notification
+    const customerId = updatedService.customerId._id; // Assuming customerId is a reference
+
+    // Notify customer about the status change
+    io.to(customerId).emit('serviceStatusUpdate', { status, serviceId });
+
+    res.json({ message: 'Service status updated and customer notified', updatedService });
+  } catch (error) {
+    console.error('Error updating service status:', error);
+    res.status(500).json({ message: 'Error updating service status', error });
+  }
+});
+app.put('/api/mechanics/mechanic/:id/availability', async (req, res) => {
+  try {
+    const mechanicId = req.params.id;
+    const { available } = req.body;
+
+    const updatedMechanic = await Mechanic.findByIdAndUpdate(
+      mechanicId,
+      { available },
+      { new: true }
+    );
+
+    if (!updatedMechanic) {
+      return res.status(404).json({ message: 'Mechanic not found' });
+    }
+
+    res.json({ message: 'Availability updated', updatedMechanic });
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating availability', error });
+  }
+});
 app.get('/api/mechanics/location/:id', async (req, res) => {
   try {
     const mechanic = await Mechanic.findById(req.params.id);
@@ -99,7 +163,7 @@ console.log(customerId);
 
 app.post('/api/services/accept', async (req, res) => {
   const { serviceId, mechanicId, customerId } = req.body;
-
+  console.log("serviceid"+serviceId);
   try {
     const service = await Service.findByIdAndUpdate(
       serviceId,

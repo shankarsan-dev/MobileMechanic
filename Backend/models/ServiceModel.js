@@ -20,11 +20,16 @@ const serviceSchema = new Schema({
     type: String,
     required: true
   },
+  vechicleNumber:{
+    type: String
+  },
   status: {
     type: String,
-    enum: ['Pending', 'Accepted', 'Completed'],
+    enum: ['Pending', 'Accepted', 'Completed',"declined","timedout",'on the way', 'arrived', 'completed'],
     default: 'Pending'
   },
+
+
   createdAt: {
     type: Date,
     default: Date.now
