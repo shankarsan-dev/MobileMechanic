@@ -614,7 +614,31 @@ const MapComponent = ({ latitude, longitude, mechanics, radius = 5 }) => {
     setPosition([latitude, longitude]);
   }, [latitude, longitude]);
 
+<<<<<<< Updated upstream
   // Initialize the map once
+=======
+  // Listen for the requestAccepted event
+  useEffect(() => {
+    socket.on('requestAccepted', ({ serviceId, mechanicId, message }) => {
+      setRequestAccepted(true);
+      // axios.get(`http://localhost:5000/api/mechanics/${mechanicId}`)
+      //   .then(response => {
+      //     setAcceptedMechanic(response.data);
+      //   })
+      //   .catch(error => {
+      //     console.error('Error fetching mechanic details:', error);
+      //   });
+        setServiceId(serviceId);
+      alert(message);
+    });
+
+    return () => {
+      socket.off('requestAccepted');
+    };
+  }, [socket]);
+
+  // Initialize the map
+>>>>>>> Stashed changes
   useEffect(() => {
     if (latitude && longitude && !mapRef.current) {
       mapRef.current = L.map('map', {

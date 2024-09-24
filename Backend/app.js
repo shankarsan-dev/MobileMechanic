@@ -31,8 +31,52 @@ mongoose.connect('mongodb://127.0.0.1:27017/mobileMechanic', {
 app.use('/api/customers', customerRoutes);
 app.use('/api/mechanics', mechanicRoutes);
 // Backend route to update mechanic's location
+<<<<<<< Updated upstream
 app.post('/api/mechanics/updateLocation', async (req, res) => {
   const { mechanicId, latitude, longitude } = req.body;
+=======
+// In your backend (Node.js/Express)
+// Route to get mechanic location
+
+app.post('/api/mechanic/rate', async (req, res) => {
+  const { mechanicId, customerId, rating} = req.body;
+
+  try {
+    
+    const newRating = new Rating({ mechanicId, customerId, rating });
+    await newRating.save();
+    const mechanic = await Mechanic.findById(mechanicId);
+    if (!mechanic) {
+      return res.status(404).json({ message: 'mechanic not found' });
+    }
+    // Emit the new rating to the mechanic through the socket
+    io.to(mechanic.socketId).emit('newRating', newRating);
+
+    res.status(201).json(newRating); // Return the saved rating
+  } catch (error) {
+    console.error('Error saving rating:', error);
+    res.status(500).json({ error: 'Error saving rating' });
+  }
+});
+app.get('/api/services/:serviceId/details', async (req, res) => {
+  try {
+    // Populate mechanic and customer details in the service document
+    const service = await Service.findOne({ _id: req.params.serviceId })
+      .populate('customerId', 'firstName lastName email phoneNumber') // Get specific customer details
+      .populate('mechanicId', 'firstName lastName email phoneNumber'); // Get specific mechanic details
+
+    if (!service) {
+      return res.status(404).json({ message: 'Service not found' });
+    }
+
+    res.json(service);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+app.put('/api/services/:serviceId/status', async (req, res) => {
+  try {
+>>>>>>> Stashed changes
   
   console.log(mechanicId);
   console.log('Received data:', { mechanicId, latitude, longitude });
@@ -49,7 +93,20 @@ app.post('/api/mechanics/updateLocation', async (req, res) => {
       return res.status(404).json({ error: 'Mechanic not found or location unchanged' });
     }
 
+<<<<<<< Updated upstream
     res.status(200).json({ message: 'Location updated successfully' });
+=======
+    // Get the customerId to send the notification
+    const customerId = updatedService.customerId._id; // Assuming customerId is a reference
+    const customer = await Customer.findById(customerId);
+    if (!customer) {
+      return res.status(404).json({ message: 'Customer not found' });
+    }
+    // Notify customer about the status change
+    io.to(customer.socketId).emit('serviceStatusUpdate', { status, serviceId });
+
+    res.json({ message: 'Service status updated and customer notified', updatedService });
+>>>>>>> Stashed changes
   } catch (error) {
     console.error('Error updating location:', error);
     res.status(500).json({ error: 'Failed to update location' });
