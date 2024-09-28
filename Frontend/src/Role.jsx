@@ -15,7 +15,7 @@ const Role = () => {
   return (
     <div className="min-h-screen flex flex-col justify-center items-center">
       <div className="text-center mb-10">
-        <h1 className='size-max'>You are?</h1>
+        <h1 className='text-5xl'>You are?</h1>
       </div>
       <div className="flex flex-col md:flex-row justify-center items-center space-y-10 md:space-y-0 md:space-x-10">
         <div

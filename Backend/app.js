@@ -312,12 +312,18 @@ console.log(customerId);
     if (!mechanic) {
       return res.status(404).json({ message: 'Mechanic not found' });
     }
+    const customer = await Customer.findById(customerId);
+    if (!customer) {
+      return res.status(404).json({ message: 'Customer not found' });
+    }
     console.log("mechanic socketid:"+mechanic.socketId);
     io.to(mechanic.socketId).emit('newRequest', {
       serviceId: service._id,
       customerId,
       vehicleType,
       description,
+      CfirstName : customer.firstName,
+      ClastName: customer.lastName,
     });
     
     res.status(201).json({ message: 'Request sent and mechanic notified', service });

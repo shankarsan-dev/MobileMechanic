@@ -996,22 +996,26 @@ const CustomerPage = () => {
       <main className="container mx-auto p-8">
         {!showMap && !showForm && (
           <>
-            <section className="bg-white p-6 rounded-lg shadow-lg mb-8">
+            {/* <section className="bg-white p-6 rounded-lg shadow-lg mb-8">
               <h2 className="text-2xl font-bold text-gray-700 mb-4">Welcome, Customer!</h2>
               <p className="text-gray-600">Here you can find mechanics, view your requests, and update your profile.</p>
-            </section>
+            </section> */}
 
-            <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <div className="bg-white p-4 rounded-lg shadow-md" onClick={handleFindMechanicClick}>
+            <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7">
+           
+              <div className="bg-white p-4 rounded-lg shadow-md hover:bg-red-300 max-w-screen-md" onClick={handleFindMechanicClick} >
+              <img src="src\assets\mechanic-2.png" alt="" />
                 <h3 className="text-xl font-semibold text-gray-700 mb-2">Find a Mechanic</h3>
                 <p className="text-gray-600">Search for nearby mechanics and request services.</p>
               </div>
-              <div className="bg-white p-4 rounded-lg shadow-md">
+              <div className="bg-white p-4 rounded-lg shadow-md hover:bg-red-300 max-w-screen-md">
+                <img src="src\assets\service.png" alt="" />
                 <h3 className="text-xl font-semibold text-gray-700 mb-2">Request History</h3>
                 <p className="text-gray-600">Check your past service requests.</p>
               </div>
-              <div className="bg-white p-4 rounded-lg shadow-md">
-                <h3 className="text-xl font-semibold text-gray-700 mb-2">Profile Settings</h3>
+              <div className="bg-white p-4 rounded-lg shadow-md hover:bg-red-300 max-w-screen-md">
+                <img src="src\assets\profile-setting.png" alt="" />
+                <h3 className="text-xl font-semibold text-gray-700 mb-2 ">Profile Settings</h3>
                 <p className="text-gray-600">Update your profile information and preferences.</p>
               </div>
             </section>
@@ -1022,16 +1026,31 @@ const CustomerPage = () => {
           <section className="bg-white p-6 rounded-lg shadow-lg mb-8">
             <h2 className="text-2xl font-bold text-gray-700 mb-4">Request a Mechanic</h2>
             <form onSubmit={handleFormSubmit}>
-              <div className="mb-4">
-                <label className="block text-gray-700 text-sm font-bold mb-2">Vehicle Type</label>
-                <input
-                  type="text"
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                  value={vehicleType}
-                  onChange={(e) => setVehicleType(e.target.value)}
-                  required
-                />
-              </div>
+            <div className="mb-4">
+      <label className="block text-gray-700 text-sm font-bold mb-2">Vehicle Type</label>
+      <select
+        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+        value={vehicleType}
+        onChange={(e) => setVehicleType(e.target.value)}
+        required
+      >
+        <option value="" disabled>Select Vehicle Type</option>
+        <option value="sedan">Sedan</option>
+        <option value="SUV">SUV (Sport Utility Vehicle)</option>
+        <option value="motorcycle">Motorcycle</option>
+        <option value="pickup_truck">Pickup Truck</option>
+        <option value="electric_car">Electric Car</option>
+        <option value="hybrid_vehicle">Hybrid Vehicle</option>
+        <option value="semi_truck">Semi Truck</option>
+        <option value="minivan">Minivan</option>
+        <option value="coupe">Coupe</option>
+        <option value="convertible">Convertible</option>
+        <option value="hatchback">Hatchback</option>
+        <option value="station_wagon">Station Wagon</option>
+        <option value="bicycle">Bicycle</option>
+        <option value="moped">Moped</option>
+      </select>
+    </div>
 
               <div className="mb-4">
                 <label className="block text-gray-700 text-sm font-bold mb-2">Description</label>

@@ -2286,8 +2286,10 @@ const MechanicPage = () => {
         )}
         {showRequestPopup && requestData && (
           <div className="popup-container bg-white p-6 rounded-lg shadow-lg">
-            <h3 className="text-lg font-semibold mb-4">New Request from {requestData.customerId}</h3>
-            <p>{requestData.description}</p>
+            <h3 className="text-lg font-semibold mb-4">New Request from {requestData.CfirstName}</h3>
+            
+            <p>vehicle Type: {requestData.vehicleType}</p>
+            <p>Problem Description: {requestData.description}</p>
             <div className="flex justify-end mt-4">
 
               <button
