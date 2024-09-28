@@ -125,6 +125,7 @@
 // };
 
 // export default NewMapComponent;
+
 // import axios from 'axios';
 // import 'leaflet/dist/leaflet.css';
 // import React, { useEffect, useRef, useState } from 'react';
@@ -693,13 +694,19 @@
 // };
 
 // export default NewMapComponent;
-import axios from 'axios';
-import React, { useEffect, useRef, useState } from 'react';
-import { MapContainer, Marker, Polyline, Popup, TileLayer } from 'react-leaflet';
-import NotificationComponent from './NotificationComponent';
-import RatingComponent from './RatingComponent';
+import { useRef } from 'react';
 
 const NewMapComponent = ({ serviceId, customerId, mechanicId, socket }) => {
+import axios from 'axios';
+import 'leaflet/dist/leaflet.css';
+import React, { useEffect, useState } from 'react';
+import { MapContainer, Marker, Polyline, Popup, TileLayer } from 'react-leaflet';
+
+const NewMapComponent = ({ serviceId, customerId, mechanicId, socket }) => {
+  console.log("service id : "+serviceId);
+  console.log("mechanicId "+mechanicId);
+  console.log("customerId "+customerId);
+
   const [mechanicLocation, setMechanicLocation] = useState(null);
   const [customerLocation, setCustomerLocation] = useState(null);
   const [mechanicDetails, setMechanicDetails] = useState(null);
@@ -747,6 +754,7 @@ const NewMapComponent = ({ serviceId, customerId, mechanicId, socket }) => {
   }, [mechanicId, customerId, serviceId]);
 
   useEffect(() => {
+
     socket.on('serviceStatusUpdate', ({ status }) => {
       setServiceDetails((prevDetails) => ({
         ...prevDetails,
@@ -769,10 +777,21 @@ const NewMapComponent = ({ serviceId, customerId, mechanicId, socket }) => {
       }
     });
 
+    // Listen to updates on service status via socket
+    socket.on('serviceStatusUpdate', ({ status }) => {
+      setServiceDetails((prevDetails) => ({
+        ...prevDetails,
+        status // Update service status when the mechanic updates it
+      }));
+    });
+
+    // Cleanup on component unmount
+
     return () => {
       socket.off('serviceStatusUpdate');
     };
   }, [socket]);
+
 
   const handleCloseNotification = () => {
     setNotification(null);
@@ -795,6 +814,7 @@ const NewMapComponent = ({ serviceId, customerId, mechanicId, socket }) => {
       console.error('Error submitting rating:', error);
     }
   };
+
 
   if (!mechanicLocation || !customerLocation || !mechanicDetails || !serviceDetails) return <p>Loading...</p>;
 

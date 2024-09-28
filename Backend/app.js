@@ -240,6 +240,9 @@ app.put('/api/services/:serviceId/status', async (req, res) => {
     console.log("customer socket id "+customer.socketId)
     io.to(customer.socketId).emit('serviceStatusUpdate', { status, serviceId });
 
+    // Notify customer about the status change
+    io.to(customerId).emit('serviceStatusUpdate', { status, serviceId });
+
     res.json({ message: 'Service status updated and customer notified', updatedService });
   } catch (error) {
     console.error('Error updating service status:', error);
