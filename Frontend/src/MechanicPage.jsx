@@ -2289,6 +2289,7 @@ const MechanicPage = () => {
             <h3 className="text-lg font-semibold mb-4">New Request from {requestData.customerId}</h3>
             <p>{requestData.description}</p>
             <div className="flex justify-end mt-4">
+
               <button
                 className="bg-red-500 text-white px-4 py-2 rounded mr-2"
                 onClick={() => handleRequestDecision(false)} // Decline
@@ -2313,7 +2314,7 @@ const MechanicPage = () => {
         {showNewMap && (
           <section className="bg-white p-6 rounded-lg shadow-lg mb-8">
             <h2 className="text-2xl font-bold text-gray-700 mb-4">Customer and Mechanic Locations</h2>
-            <NewMechanicMapComponent mechanicId={mechanicId} customerId={requestData.customerId} />
+            <NewMechanicMapComponent serviceId={requestData.serviceId} mechanicId={mechanicId} customerId={requestData.customerId} socket ={socket} />
           </section>
         )}
       </main>

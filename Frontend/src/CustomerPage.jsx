@@ -706,8 +706,8 @@ const CustomerPage = () => {
   const [showForm, setShowForm] = useState(false);
   const [vehicleType, setVehicleType] = useState('');
   const [description, setDescription] = useState('');
-  const [requestAccepted, setRequestAccepted] = useState(false);
-  const [acceptedMechanic, setAcceptedMechanic] = useState(null);
+  // const [requestAccepted, setRequestAccepted] = useState(false);
+  // const [acceptedMechanic, setAcceptedMechanic] = useState(null);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -718,27 +718,10 @@ const CustomerPage = () => {
       socket.on('updateMechanics', (updatedMechanics) => {
         setMechanics(updatedMechanics);
       });
-
-      // Listen for the requestAccepted event
-      socket.on('requestAccepted', ({ serviceId, mechanicId, message }) => {
-        setRequestAccepted(true);
-
-        // Fetch the mechanic details
-        axios.get(`${server}/api/mechanics/${mechanicId}`)
-          .then(response => {
-            setAcceptedMechanic(response.data);
-          })
-          .catch(error => {
-            console.error('Error fetching mechanic details:', error);
-          });
-
-        alert(message);  // Optionally replace this with a modal or toast notification
-      });
-
       // Cleanup on component unmount
       return () => {
         socket.off('updateMechanics');
-        socket.off('requestAccepted');
+        // socket.off('requestAccepted');
       };
     } else {
       console.warn("Customer ID is null, redirecting to login...");
@@ -806,7 +789,7 @@ const CustomerPage = () => {
       <CustomerNav onLogout={handleLogout} />
 
       <main className="container mx-auto p-8">
-        {!showMap && !showForm && !requestAccepted && (
+        {!showMap && !showForm && (
           <>
             <section className="bg-white p-6 rounded-lg shadow-lg mb-8">
               <h2 className="text-2xl font-bold text-gray-700 mb-4">Welcome, Customer!</h2>
@@ -869,6 +852,7 @@ const CustomerPage = () => {
           <section className="bg-white p-6 rounded-lg shadow-lg mb-8">
             <h2 className="text-2xl font-bold text-gray-700 mb-4">Available Mechanics</h2>
             <MapComponent 
+            socket = {socket}
               latitude={latitude} 
               longitude={longitude} 
               mechanics={mechanics} 
@@ -878,17 +862,6 @@ const CustomerPage = () => {
           </section>
         )}
 
-        {requestAccepted && acceptedMechanic && (
-          <section className="bg-white p-6 rounded-lg shadow-lg mb-8">
-            <h2 className="text-2xl font-bold text-gray-700 mb-4">Request Accepted!</h2>
-            <p>Your request has been accepted by {acceptedMechanic.name}. They will arrive soon.</p>
-            <MapComponent 
-              latitude={latitude} 
-              longitude={longitude} 
-              mechanics={[acceptedMechanic]} 
-            />
-          </section>
-        )}
       </main>
     </div>
   );

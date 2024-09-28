@@ -1,4 +1,10 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import AdminFetchCustomers from "./AdminFetchCustomers";
+import AdminFetchMechanic from "./AdminFetchMechanic";
+import AdminFetchServices from "./AdminFetchServices";
+import AdminLogin from "./AdminLogin";
+import AdminNav from "./AdminNav";
+import AdminPage from "./AdminPage";
 import CustomerLogin from "./CustomerLogin";
 import CustomerNav from "./CustomerNav";
 import CustomerPage from "./CustomerPage";
@@ -11,7 +17,7 @@ import MechanicPage from "./MechanicPage";
 import MechanicProfile from "./MechanicProfile";
 import MechanicSignup from "./MechanicSignup";
 import Role from "./Role";
-import SimpleMap from "./simplemap";
+import ServiceStatus from "./ServiceStatus";
 
 
 const App = () => {
@@ -64,11 +70,40 @@ const App = () => {
 
       element: <><MechanicNav/><MechanicProfile /> </>
     },
+  
     {
-      path: "/simplemap",
+      path: "/service-status",
 
-      element: <><SimpleMap></SimpleMap> </>
-    }
+      element: <ServiceStatus/>
+    }, {
+      path: "/admin-login",
+
+      element: <AdminLogin/>
+    }, {
+      path: "/admin-dashboard",
+
+      element: <><AdminNav/><AdminPage/></>
+    },
+      {
+      path: "/admin-dashboard",
+
+      element: <AdminPage/>
+    },
+    {
+      path: "/admin/mechanics",
+
+      element: <AdminFetchMechanic/>
+    },
+    {
+      path: "/admin/customers",
+
+      element: <AdminFetchCustomers/>
+    },
+    {
+      path: "/admin/services",
+
+      element: <AdminFetchServices/>
+    },
   ]);
 
   return (
