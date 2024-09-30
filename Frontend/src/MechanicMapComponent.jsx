@@ -31,7 +31,7 @@ const DraggableMarker = ({ position, onDragEnd }) => {
 
 const MechanicMapComponent = ({ socket }) => {
   const [position, setPosition] = useState(null);
-  const [loading, setLoading] = useState(true); // Track loading state
+  const [loading, setLoading] = useState(true);
   const [mId, setMId] = useState(null);
   const [locationSet, setLocationSet] = useState(false);
 
@@ -55,15 +55,16 @@ const MechanicMapComponent = ({ socket }) => {
           const { latitude, longitude } = pos.coords;
           setPosition([latitude, longitude]);
           setLocationSet(true);
-          setLoading(false); // Stop loading
+          setLoading(false);
 
+          // Update location in the database
           if (decodedToken && decodedToken.id) {
             updateLocationInDatabase(latitude, longitude, decodedToken.id);
           }
         },
         (error) => {
           console.error("Error fetching geolocation:", error);
-          setLoading(false); // Stop loading on error
+          setLoading(false);
         }
       );
     }
@@ -89,7 +90,6 @@ const MechanicMapComponent = ({ socket }) => {
     }
   };
 
-  // Emit the availability event when the map is ready
   const handleMapReady = () => {
     if (mId) {
       socket.emit("MsetAvailable", mId);
@@ -99,14 +99,14 @@ const MechanicMapComponent = ({ socket }) => {
 
   return (
     loading ? (
-      <div>Loading map...</div> // Show a loading message or spinner
+      <div>Loading map...</div>
     ) : (
       position && (
         <MapContainer 
           center={position} 
           zoom={13} 
           style={{ height: '100vh', width: '100%' }} 
-          whenReady={handleMapReady} // Emit when the map is ready
+          whenReady={handleMapReady}
         >
           <TileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -120,3 +120,4 @@ const MechanicMapComponent = ({ socket }) => {
 };
 
 export default MechanicMapComponent;
+

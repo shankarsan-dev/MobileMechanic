@@ -11,6 +11,7 @@ const Service = require('./models/ServiceModel');
 const Rating = require("./models/RatingModel");
 const Admin = require('./models/AdminModel');
 const jwt = require('jsonwebtoken');
+const {protectAdmin} = require("./middleware/protectAdmin");
 
 
 require('dotenv').config();
@@ -53,7 +54,7 @@ app.use('/api/mechanics', mechanicRoutes);
 // In your backend (Node.js/Express)
 // Route to get mechanic location
 // Fetch all customers
-app.get('/api/services', async (req, res) => {
+app.get('/api/admin/services',protectAdmin, async (req, res) => {
   try {
     const services = await Service.find()
       .populate('customerId', 'firstName lastName') // Populate customer details
@@ -65,18 +66,29 @@ app.get('/api/services', async (req, res) => {
 });
 
 // Delete a service by ID
-app.delete('/api/services/:id', async (req, res) => {
+// app.delete('/api/admin/services/:id',async (req, res) => {
+//   try {
+//     const service = await Service.findById(req.params.id);
+//     if (!service) return res.status(404).json({ message: 'Service not found' });
+
+//     await service.remove();
+//     res.json({ message: 'Service deleted successfully' });
+//   } catch (err) {
+//     res.status(500).json({ message: err.message });
+//   }
+// });
+app.delete('/api/admin/services/:id', async (req, res) => {
   try {
-    const service = await Service.findById(req.params.id);
+    const service = await Service.findByIdAndDelete(req.params.id);
     if (!service) return res.status(404).json({ message: 'Service not found' });
 
-    await service.remove();
     res.json({ message: 'Service deleted successfully' });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 });
-app.get('/api/customers/all', async (req, res) => {
+
+app.get('/api/admin/customers/all',protectAdmin, async (req, res) => {
   try {
     const customers = await Customer.find();
     res.json(customers);
@@ -86,7 +98,7 @@ app.get('/api/customers/all', async (req, res) => {
 });
 
 // Delete a customer by ID
-app.delete('/api/customers/:id', async (req, res) => {
+app.delete('/api/admin/customers/:id', async (req, res) => {
   try {
     const customer = await Customer.findById(req.params.id);
     if (!customer) return res.status(404).json({ message: 'Customer not found' });
@@ -98,7 +110,7 @@ app.delete('/api/customers/:id', async (req, res) => {
   }
 });
 
-app.get('/api/mechanics', async (req, res) => {
+app.get('/api/admin/mechanics',protectAdmin, async (req, res) => {
   try {
     const mechanics = await Mechanic.find();
     res.json(mechanics);
@@ -106,7 +118,7 @@ app.get('/api/mechanics', async (req, res) => {
     res.status(500).json({ message: 'Failed to fetch mechanics' });
   }
 });
-app.delete('/api/mechanics/:id', async (req, res) => {
+app.delete('/api/admin/mechanics/:id', async (req, res) => {
   try {
     await Mechanic.findByIdAndDelete(req.params.id);
     res.status(200).json({ message: 'Mechanic deleted successfully' });

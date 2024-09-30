@@ -204,7 +204,7 @@ const DisplayProfile = () => {
           firstName: response.data.firstName,
           lastName: response.data.lastName,
           email: response.data.email,
-          phone: response.data.phone,
+          phone: response.data.phoneNumber,
           address: response.data.address,
           profilePicture: response.data.profilePicture,
         });
@@ -222,6 +222,7 @@ const DisplayProfile = () => {
   };
 
   return (
+    
     <div className="min-h-screen bg-slate-50 flex flex-col">
 
       <main className="container mx-auto flex-grow p-8 flex justify-center items-center">
@@ -240,6 +241,7 @@ const DisplayProfile = () => {
               <p className="text-gray-700">Email: {profile.email}</p>
               <p className="text-gray-700">Phone: {profile.phone}</p>
               <p className="text-gray-700">Address: {profile.address}</p>
+  
             </div>
           </div>
         </section>

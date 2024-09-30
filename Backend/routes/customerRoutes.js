@@ -14,10 +14,11 @@ router.get('/profile', protect, (req, res) => {
     firstName: req.customer.firstName,
     lastName: req.customer.lastName,
     email: req.customer.email,
-    phone: req.customer.phone,
+    phoneNumber: req.customer.phoneNumber,
     address: req.customer.address,
     profilePicture: req.customer.profilePicture,
   });
+ 
   router.get('/profile')
 });
 // Fetch available mechanics

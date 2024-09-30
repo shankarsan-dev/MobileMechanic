@@ -88,7 +88,7 @@ const AdminPage = () => {
         </Link>
 
         <Link to="/admin/customers">
-          <button className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 max-w-sm flex flex-col items-center"> {/* Flex column for image and text */}
+          <button   className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 max-w-sm flex flex-col items-center"> {/* Flex column for image and text */}
             <img src="src/assets/working.png" alt="Customer Details" className="mb-2" /> {/* Space below image */}
             Customer Details
           </button>

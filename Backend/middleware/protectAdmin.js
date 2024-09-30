@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const Admin = require('./models/adminModel'); // Adjust the path as needed
+const Admin = require('../models/AdminModel'); // Adjust the path as needed
 
 const protectAdmin = async (req, res, next) => {
   let token;

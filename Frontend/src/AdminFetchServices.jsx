@@ -10,7 +10,10 @@ const AdminFetchServices = () => {
   // Function to fetch services data
   const fetchServices = async () => {
     try {
-      const response = await axios.get(`${server}/api/services`);
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`${server}/api/admin/services`,{
+        headers: { Authorization: `Bearer ${token}`},
+      });
       setServices(response.data);
     } catch (err) {
       setError('Failed to fetch services');
@@ -20,7 +23,7 @@ const AdminFetchServices = () => {
   // Function to delete a service
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`${server}/api/services/${id}`);
+      await axios.delete(`${server}/api/admin/services/${id}`);
       // Refresh the list after deletion
       fetchServices();
     } catch (err) {

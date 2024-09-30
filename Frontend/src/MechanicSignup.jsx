@@ -2,7 +2,7 @@ import axios from 'axios';
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 const server = 'http://localhost:5000';
-const CustomerSignup = () => {
+const MechanicSignup = () => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
@@ -68,6 +68,7 @@ const CustomerSignup = () => {
       .then(response => {
         setSuccess('Signup successful!');
         setErrors({});
+        localStorage.setItem('token', response.data.token); 
         navigate('/mechanic-page'); // Redirect to CustomerPage after successful signup
       })
       .catch(error => {
@@ -179,4 +180,4 @@ const CustomerSignup = () => {
   );
 };
 
-export default CustomerSignup;
+export default MechanicSignup;

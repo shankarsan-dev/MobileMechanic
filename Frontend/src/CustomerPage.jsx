@@ -917,6 +917,7 @@ const CustomerPage = () => {
   useEffect(() => {
     const token = localStorage.getItem('token');
     const customerId = token ? jwtDecode(token).id : null;
+    console.log("customer iD:" + customerId);
 
     if (customerId) {
       // Socket.IO event handlers

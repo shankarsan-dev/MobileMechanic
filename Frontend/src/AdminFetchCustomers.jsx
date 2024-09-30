@@ -10,7 +10,10 @@ const AdminFetchCustomers = () => {
   // Function to fetch customers data
   const fetchCustomers = async () => {
     try {
-      const response = await axios.get(`${server}/api/customers/all`);
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`${server}/api/admin/customers/all`,{
+        headers: { Authorization: `Bearer ${token}`},
+      });
       setCustomers(response.data);
     } catch (err) {
       setError('Failed to fetch customers');
@@ -20,7 +23,7 @@ const AdminFetchCustomers = () => {
   // Function to delete a customer
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`${server}/api/customers/${id}`);
+      await axios.delete(`${server}/api/admin/customers/${id}`);
       // Refresh the list after deletion
       fetchCustomers();
     } catch (err) {

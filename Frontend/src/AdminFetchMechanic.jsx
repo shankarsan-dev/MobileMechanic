@@ -10,7 +10,10 @@ const AdminFetchMechanic = () => {
   // Function to fetch mechanics data
   const fetchMechanics = async () => {
     try {
-      const response = await axios.get(`${server}/api/mechanics`);
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`${server}/api/admin/mechanics`,{
+        headers: { Authorization: `Bearer ${token}`},
+      });
       setMechanics(response.data);
     } catch (err) {
       setError('Failed to fetch mechanics');
@@ -20,7 +23,7 @@ const AdminFetchMechanic = () => {
   // Function to delete a mechanic
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`${server}/api/mechanics/${id}`);
+      await axios.delete(`${server}/api/admin/mechanics/${id}`);
       // Refresh the list after deletion
       fetchMechanics();
     } catch (err) {
@@ -71,3 +74,4 @@ const AdminFetchMechanic = () => {
 };
 
 export default AdminFetchMechanic;
+
