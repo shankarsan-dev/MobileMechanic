@@ -64,7 +64,7 @@ app.use('/api/mechanics', mechanicRoutes);
 // GET route to get mechanic verification status
 
 // Assuming you're using express and have your Mechanic model imported
-app.put('/api/admin/mechanics/approve/:id', async (req, res) => {
+app.put('/api/admin/mechanics/approve/:id', protectAdmin, async (req, res) => {
   try {
     const mechanicId = req.params.id;
 
@@ -76,7 +76,7 @@ app.put('/api/admin/mechanics/approve/:id', async (req, res) => {
     }
 
     // Emit the socket event with the verified mechanic's data
-    //io.emit('mechanicVerified', mechanic);
+    io.emit('mechanicVerified', mechanic);
 
     res.status(200).json({ message: 'Mechanic approved successfully', mechanic });
   } catch (error) {

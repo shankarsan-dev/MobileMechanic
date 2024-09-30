@@ -90,30 +90,30 @@ const App = () => {
 
       element: <><AdminNav/><AdminPage/></>
     },
-      {
-      path: "/admin-dashboard",
-
-      element: <AdminPage/>
-    },
     {
       path: "/admin/mechanics",
 
-      element: <AdminFetchMechanic/>
+      element: <><AdminNav/><AdminFetchMechanic/></>
     },
     {
       path: "/admin/customers",
 
-      element: <AdminFetchCustomers/>
+      element: <>
+      <AdminNav/>
+      <AdminFetchCustomers/></>
     },
     {
       path: "/admin/services",
 
-      element: <AdminFetchServices/>
+      element: <>
+      <AdminNav/>
+      <AdminFetchServices/>
+      </>
     },
     {
       path: "/admin/pending-mechanics",
 
-      element: <PendingMechanics/>
+      element: <><AdminNav/><PendingMechanics/></>
     },
   ]);
 
