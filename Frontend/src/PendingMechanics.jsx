@@ -223,12 +223,11 @@ const PendingMechanics = () => {
               <td className="py-2 px-4 border-b">{mechanic.phoneNumber}</td>
             
               <td className="py-2 px-4 border-b">
-                {/* <a href={mechanic.identificationDocument} target="_blank" rel="noopener noreferrer">View Document</a> */}
-                <img src={server+"/"+mechanic.photo} alt={`${mechanic.firstName} ${mechanic.lastName}`} className="w-16 h-16 object-cover" />
+                <img src={server+"/"+mechanic.idDocument} alt="" className="w-16 h-16 object-cover" />
               </td>
               <td className="py-2 px-4 border-b">
            
-                <img src={server+"/"+mechanic.idDocument} alt={`${mechanic.firstName} ${mechanic.lastName}`} className="w-16 h-16 object-cover" />
+                <img src={server+"/"+mechanic.photo} alt="" className="w-16 h-16 object-cover" />
               </td>
               <td className="py-2 px-4 border-b">
                 <button
