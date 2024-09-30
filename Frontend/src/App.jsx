@@ -17,6 +17,7 @@ import MechanicPage from "./MechanicPage";
 import MechanicProfile from "./MechanicProfile";
 import MechanicSignup from "./MechanicSignup";
 import NewMapComponent from "./NewMapComponent";
+import PendingMechanics from "./PendingMechanics";
 import Role from "./Role";
 import ServiceStatus from "./ServiceStatus";
 
@@ -108,6 +109,11 @@ const App = () => {
       path: "/admin/services",
 
       element: <AdminFetchServices/>
+    },
+    {
+      path: "/admin/pending-mechanics",
+
+      element: <PendingMechanics/>
     },
   ]);
 

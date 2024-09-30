@@ -1103,7 +1103,7 @@ const MapComponent = ({ socket, latitude, longitude, mechanics, vehicleType, des
     if (latitude && longitude && !mapRef.current) {
       mapRef.current = L.map('map', {
         center: [latitude, longitude],
-        zoom: 20,
+        zoom: 11.5,
       });
 
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {

@@ -2,11 +2,20 @@ const express = require('express');
 const { signup, login } = require('../controllers/mechanicController');
 const { protectMechanic } = require('../middleware/authMechanicMiddleware');
 const Mechanic = require('../models/mechanicModel'); // Assuming this is the correct path to your model
-
+const upload = require('../middleware/multer'); 
 const router = express.Router();
 
 // Mechanic routes
-router.post('/signup', signup);
+// router.post('/signup', signup);
+// router.post('/signup', upload.fields([{ name: 'idDocument', maxCount: 1 }, { name: 'photo', maxCount: 1 }]),signup);
+router.post('/signup', upload.fields([{ name: 'idDocument', maxCount: 1 }, { name: 'photo', maxCount: 1 }]), (req, res, next) => {
+  // Check if both files are uploaded
+  if (!req.files['idDocument'] || !req.files['photo']) {
+    return res.status(400).json({ message: 'Both ID document and photo are required.' });
+  }
+  next();
+}, signup);
+
 router.post('/login', login);
 
 // Example of a protected route

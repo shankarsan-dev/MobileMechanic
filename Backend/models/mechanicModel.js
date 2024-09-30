@@ -42,7 +42,18 @@ const mechanicSchema = new mongoose.Schema({
   socketId: { type: String, default: null },
   
   available: { type: Boolean, default: false },
-  serviceCharge: { type: Number, min: 100, max: 10000  }
+  serviceCharge: { type: Number, min: 100, max: 10000  },
+  
+  idDocument: {type: String},
+  verification:{type:String,
+  enum: ['pending', 'verified', 'verified-read',],
+  default: 'pending'
+
+   },
+   photo: {
+    type: String,  // The path to the uploaded photo
+  },
+
 });
 
 // Encrypt password before saving

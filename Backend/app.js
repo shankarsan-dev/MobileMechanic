@@ -12,6 +12,9 @@ const Rating = require("./models/RatingModel");
 const Admin = require('./models/AdminModel');
 const jwt = require('jsonwebtoken');
 const {protectAdmin} = require("./middleware/protectAdmin");
+const fileUpload = require('express-fileupload');
+const path = require('path');
+const fs = require('fs');
 
 
 require('dotenv').config();
@@ -27,6 +30,9 @@ const io = socketIo(server, {
 
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// app.use(fileUpload());
 
 mongoose.connect('mongodb://127.0.0.1:27017/mobileMechanic', {
   // useNewUrlParser: true,
@@ -49,11 +55,37 @@ mongoose.connect('mongodb://127.0.0.1:27017/mobileMechanic', {
   // });
 app.use('/api/customers', customerRoutes);
 app.use('/api/mechanics', mechanicRoutes);
+
 // app.use("/api/requests",serviceRoutes);
 // Backend route to update mechanic's location
 // In your backend (Node.js/Express)
 // Route to get mechanic location
 // Fetch all customers
+// GET route to get mechanic verification status
+
+// Assuming you're using express and have your Mechanic model imported
+app.put('/api/admin/mechanics/approve/:id', async (req, res) => {
+  try {
+    const mechanicId = req.params.id;
+
+    // Update the mechanic's verification status
+    const mechanic = await Mechanic.findByIdAndUpdate(mechanicId, { verification: 'verified' }, { new: true });
+
+    if (!mechanic) {
+      return res.status(404).json({ message: 'Mechanic not found' });
+    }
+
+    // Emit the socket event with the verified mechanic's data
+    //io.emit('mechanicVerified', mechanic);
+
+    res.status(200).json({ message: 'Mechanic approved successfully', mechanic });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Failed to approve mechanic' });
+  }
+});
+
+
 app.get('/api/admin/services',protectAdmin, async (req, res) => {
   try {
     const services = await Service.find()

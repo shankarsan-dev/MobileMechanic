@@ -30,7 +30,7 @@ exports.signup = async (req, res) => {
       email: customer.email,
       address: customer.address,
       phone: customer.phoneNumber,
-      token: generateToken(customer._id),
+     s
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
