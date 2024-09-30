@@ -1,90 +1,9 @@
-// const Mechanic = require('../models/mechanicModel');
-// const bcrypt = require('bcryptjs');
-// const jwt = require('jsonwebtoken');
-
-// // Sign up a new mechanic
-// exports.signup = async (req, res) => {
-//   const { firstName, lastName, email, password, phoneNumber, address,
-//     gender} = req.body;
-
-//   try {
-//     // Check if the mechanic already exists
-//     const mechanicExists = await Mechanic.findOne({ email });
-
-//     if (mechanicExists) {
-//       return res.status(400).json({ message: 'Mechanic already exists' });
-//     }
-
-//     // Create a new mechanic
-//     const mechanic = await Mechanic.create({
-//       firstName,
-//       lastName,
-//       email,
-//       password,
-//       phoneNumber,
-//       address,
-//       gender
-//     });
-
-//     res.status(201).json({
-//       _id: mechanic._id,
-//       firstName: mechanic.firstName,
-//       lastName: mechanic.lastName,
-//       email: mechanic.email,
-//       phoneNumber: mechanic.phoneNumber,
-//       address: mechanic.address,
-//       token: generateToken(mechanic._id),
-//     });
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//   }
-// };
-
-// // Log in an existing mechanic
-// exports.login = async (req, res) => {
-//   const { email, password } = req.body;
-
-//   try {
-//     // Find the mechanic by email
-//     const mechanic = await Mechanic.findOne({ email });
-
-//     // Check if the mechanic exists and if the password matches
-//     if (mechanic && (await bcrypt.compare(password, mechanic.password))) {
-//       res.json({
-//         _id: mechanic._id,
-//         firstName: mechanic.firstName,
-//         lastName: mechanic.lastName,
-//         email: mechanic.email,
-//         phoneNumber: mechanic.phoneNumber,
-//         token: generateToken(mechanic._id),
-//       });
-//     } else {
-//       res.status(401).json({ message: 'Invalid email or password' });
-//     }
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//   }
-// };
-
-// // Generate JWT token
-// const generateToken = (id) => {
-//   return jwt.sign({ id }, 'secret', { expiresIn: '30d' });
-// };
-
-
 const Mechanic = require('../models/mechanicModel');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-// Sign up a new mechanic
 // exports.signup = async (req, res) => {
 //   const { firstName, lastName, email, password, phoneNumber, address, gender } = req.body;
-//   console.log(req.body); // Log form fields
-//   console.log(req.files);
-//   // Access uploaded files from req.files
-//   const idDocument = req.files['idDocument'] ? req.files['idDocument'][0].path : null;
-//   const photo = req.files['photo'] ? req.files['photo'][0].path : null;
-
 //   try {
 //     // Check if the mechanic already exists
 //     const mechanicExists = await Mechanic.findOne({ email });
@@ -93,10 +12,11 @@ const jwt = require('jsonwebtoken');
 //       return res.status(400).json({ message: 'Mechanic already exists' });
 //     }
 
-//     // Hash the password
+//     // Hash the password before saving
+//     console.log(" plain password "+password);
 //     const hashedPassword = await bcrypt.hash(password, 10);
-
-//     // Create a new mechanic
+//     console.log("hashed password: "+ hashedPassword);
+//     // Create a new mechanic with the hashed password
 //     const mechanic = await Mechanic.create({
 //       firstName,
 //       lastName,
@@ -105,10 +25,9 @@ const jwt = require('jsonwebtoken');
 //       phoneNumber,
 //       address,
 //       gender,
-//       idDocument, // Store the path to the uploaded identification document
-//       photo, // Store the path to the uploaded photo
 //     });
 
+//     // Respond with the created mechanic's information and a JWT token
 //     res.status(201).json({
 //       _id: mechanic._id,
 //       firstName: mechanic.firstName,
@@ -123,73 +42,112 @@ const jwt = require('jsonwebtoken');
 //   }
 // };
 
+// exports.login = async (req, res) => {
+//   const { email, password } = req.body;
+//   console.log("email " + email);
+//   console.log("password " +password);
+//   try {
+//     // Find the mechanic by email
+//     const mechanic = await Mechanic.findOne({ email });
+
+//     if (!mechanic) {
+//       return res.status(401).json({ message: 'Invalid email or password' });
+//     }
+
+//     // Compare the entered password with the stored hashed password
+//     const isMatch = await bcrypt.compare(password, mechanic.password);
+//     if (!isMatch) {
+//       return res.status(401).json({ message: 'Invalid email or password' });
+//     }
+
+//     // If password matches, return mechanic data with JWT token
+//     res.json({
+//       _id: mechanic._id,
+//       firstName: mechanic.firstName,
+//       lastName: mechanic.lastName,
+//       email: mechanic.email,
+//       phoneNumber: mechanic.phoneNumber,
+//       token: generateToken(mechanic._id),
+//     });
+//   } catch (error) {
+//     res.status(500).json({ message: error.message });
+//   }
+// };
+
+
 exports.signup = async (req, res) => {
   const { firstName, lastName, email, password, phoneNumber, address, gender } = req.body;
-console.log(firstName);
   try {
-    
     // Check if the mechanic already exists
     const mechanicExists = await Mechanic.findOne({ email });
-
     if (mechanicExists) {
       return res.status(400).json({ message: 'Mechanic already exists' });
     }
-
-    // Hash the password before saving
-    const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create a new mechanic
     const mechanic = await Mechanic.create({
       firstName,
       lastName,
       email,
-      password: hashedPassword,
+      password, // Save the hashed password
       phoneNumber,
       address,
       gender,
-      idDocument: req.files['idDocument'][0].path, // Save the path of the uploaded file
-      photo: req.files['photo'][0].path, // Save the path of the uploaded file
     });
 
+    // Respond with a token
     res.status(201).json({
       _id: mechanic._id,
       firstName: mechanic.firstName,
       lastName: mechanic.lastName,
       email: mechanic.email,
-      phoneNumber: mechanic.phoneNumber,
-      address: mechanic.address,
       token: generateToken(mechanic._id),
     });
   } catch (error) {
-    console.error(error); // Log the error
     res.status(500).json({ message: error.message });
   }
 };
-// Log in an existing mechanic
+
+
 exports.login = async (req, res) => {
   const { email, password } = req.body;
-
   try {
-    // Find the mechanic by email
+    // Find mechanic by email
     const mechanic = await Mechanic.findOne({ email });
-
-    // Check if the mechanic exists and if the password matches
-    if (mechanic && (await bcrypt.compare(password, mechanic.password))) {
-      res.json({
-        _id: mechanic._id,
-        firstName: mechanic.firstName,
-        lastName: mechanic.lastName,
-        email: mechanic.email,
-        phoneNumber: mechanic.phoneNumber,
-        token: generateToken(mechanic._id),
-      });
-    } else {
-      res.status(401).json({ message: 'Invalid email or password' });
+    if (!mechanic) {
+      return res.status(401).json({ message: 'Invalid email or password' });
     }
+
+    // Compare the entered password with the stored hash
+    console.log("Entered Password:", password); // Log entered password ('123')
+    console.log("Stored Hashed Password:", mechanic.password); // Log the hashed password from DB
+    const isMatch = await bcrypt.compare(password, mechanic.password);
+    console.log("Password Match Result:", isMatch); // Should log true if passwords match
+
+    if (!isMatch) {
+      return res.status(401).json({ message: 'Invalid email or password' });
+    }
+
+    // Return mechanic data and token
+    res.json({
+      _id: mechanic._id,
+      firstName: mechanic.firstName,
+      lastName: mechanic.lastName,
+      email: mechanic.email,
+      token: generateToken(mechanic._id),
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
+
+
+
+
+
+
+
+
 
 // Generate JWT token
 const generateToken = (id) => {
