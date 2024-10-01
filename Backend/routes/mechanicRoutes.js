@@ -58,5 +58,47 @@ router.post('/updateCharge', async (req, res) => {
   }
 });
 
+router.get('/:mechanicId/status', async (req, res) => {
+  const { mechanicId } = req.params;
+
+  try {
+    const mechanic = await Mechanic.findById(mechanicId);
+      console.log("mechanic id2: " + mechanicId);
+    if (!mechanic) {
+      return res.status(404).json({ error: 'Mechanic not found' });
+    }
+
+    console.log(mechanic.verification);
+    // Send mechanic's verification status
+    return res.json({ status: mechanic.verification });
+  } catch (error) {
+    console.error('Error fetching mechanic status:', error);
+    console.log("status"+ res.body.st);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+router.post('/:mechanicId/updateStatus', async (req, res) => {
+  const { mechanicId } = req.params;
+  const { verification } = req.body;
+
+  try {
+    // Find mechanic by ID and update the verification status
+    const mechanic = await Mechanic.findByIdAndUpdate(
+      mechanicId,
+      { verification },
+      { new: true }
+    );
+
+    if (!mechanic) {
+      return res.status(404).json({ message: 'Mechanic not found' });
+    }
+
+    // Return success response with updated status
+    return res.status(200).json({ message: 'Mechanic status updated', status: mechanic.verification });
+  } catch (error) {
+    console.error('Error updating mechanic status:', error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+});
 module.exports = router;
 
