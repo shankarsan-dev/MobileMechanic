@@ -1010,7 +1010,6 @@
 // };
 
 // export default MapComponent;
-
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import L from 'leaflet';
@@ -1019,8 +1018,10 @@ import React, { useEffect, useRef, useState } from 'react';
 import Modal from 'react-modal';
 import NewMapComponent from './NewMapComponent'; // Import NewMapComponent
 
+
 const MapComponent = ({ socket, latitude, longitude, mechanics, vehicleType, description, radius = 5 }) => {
   const [requestAccepted, setRequestAccepted] = useState(false);
+  const [requestDeclined, setRequestDeclined] = useState(false);
   const [acceptedMechanic, setAcceptedMechanic] = useState(null);
   const [selectedMechanic, setSelectedMechanic] = useState(null);
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -1097,6 +1098,18 @@ const MapComponent = ({ socket, latitude, longitude, mechanics, vehicleType, des
       socket.off('requestAccepted');
     };
   }, [socket]);
+  useEffect(() => {
+    socket.on("requestDeclined", ({ serviceId, mechanicId, message }) => {
+      setRequestDeclined(true);
+      setServiceId(serviceId);
+      alert(message);
+    });
+
+    return () => {
+      socket.off('requestDeclined');
+    };
+  }, [socket]);
+
 
   // Initialize the map
   useEffect(() => {

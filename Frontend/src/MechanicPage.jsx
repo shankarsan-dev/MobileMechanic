@@ -3131,6 +3131,216 @@
 // };
 
 // export default MechanicPage;
+// import axios from 'axios';
+// import { jwtDecode } from 'jwt-decode';
+// import React, { useEffect, useRef, useState } from 'react';
+// import io from 'socket.io-client';
+// import MechanicMapComponent from './MechanicMapComponent';
+// import MechanicNav from './MechanicNav';
+// import NewMechanicMapComponent from './NewMechanicMapComponent';
+// import PopupForm from './PopupForm';
+
+// const server = 'http://localhost:5000';
+// const socket = io(server);
+
+// const MechanicPage = () => {
+//   const [showMap, setShowMap] = useState(false);
+//   const [showRequestPopup, setShowRequestPopup] = useState(false);
+//   const [showServiceChargePopup, setShowServiceChargePopup] = useState(false);
+//   const [showNewMap, setShowNewMap] = useState(false);
+//   const [requestData, setRequestData] = useState(null);
+//   const [verificationStatus, setVerificationStatus] = useState('pending'); // default status
+//   const [alertShown, setAlertShown] = useState(false); // state to track if alert has been shown
+//   const hasFetchedStatus = useRef(false); // Ref to track if status has been fetched
+
+//   const token = localStorage.getItem('token');
+//   const mechanicId = token ? jwtDecode(token).id : null;
+
+//   const fetchVerificationStatus = async () => {
+//     try {
+//       console.log("Fetching verification status for mechanicId:", mechanicId);
+//       const response = await axios.get(`${server}/api/mechanics/${mechanicId}/status`);
+//       const status = response.data.status;
+//       console.log("Fetched status:", status);
+//       setVerificationStatus(status);
+
+//       // Only show alert if verified and not shown before
+//       if (status === 'verified' && !alertShown) {
+//         alert("You are verified");
+//         setAlertShown(true); // Set alert shown to true
+
+//         // Update status to verified-read
+//         await axios.post(`${server}/api/mechanics/${mechanicId}/updateStatus`, { verification: 'verified-read' });
+//         setVerificationStatus('verified-read'); // Update the local state
+//       }
+//     } catch (error) {
+//       console.error('Error fetching verification status:', error);
+//     }
+//   };
+
+//   // Use useEffect to call fetchVerificationStatus only once
+//   useEffect(() => {
+//     if (mechanicId && !hasFetchedStatus.current) {
+//       hasFetchedStatus.current = true; // Mark that we've fetched the status
+//       fetchVerificationStatus();
+//     }
+//   }, [mechanicId]); // Dependency on mechanicId
+
+//   useEffect(() => {
+//     socket.on('connect', () => {
+//       console.log('Socket connected with ID:', socket.id);
+//     });
+
+//     const handleNewRequest = (data) => {
+//       setRequestData(data);
+//       setShowRequestPopup(true);
+//       setShowMap(false);
+//       setShowNewMap(false);
+//     };
+
+//     socket.on('newRequest', handleNewRequest);
+
+//     return () => {
+//       socket.off('newRequest', handleNewRequest);
+//     };
+//   }, [mechanicId]);
+
+//   const handleRequestDecision = async (accept) => {
+//     setShowRequestPopup(false); // Close the request popup
+
+//     if (accept) {
+//       try {
+//         await axios.post(`${server}/api/services/accept`, {
+//           serviceId: requestData.serviceId,
+//           mechanicId,
+//           customerId: requestData.customerId,
+//         });
+
+//         // Hide all other components and show the new map component
+//         setShowNewMap(true);
+//         setShowMap(false);
+//         setShowServiceChargePopup(false);
+//       } catch (error) {
+//         console.error('Error accepting request:', error);
+//       }
+//     } else {
+//       setShowMap(true);  // Show the map again after declining
+//     }
+//   };
+
+//   const handleSectionClick = (section) => {
+//     if (verificationStatus === 'pending') {
+//       alert('Not verified');
+//     } else {
+//       switch (section) {
+//         case 'currentRequests':
+//           setShowServiceChargePopup(true); // Show the service charge popup
+//           setShowMap(false); // Hide the map
+//           setShowRequestPopup(false); // Hide new request popup
+//           setShowNewMap(false); // Ensure new map component is hidden
+//           break;
+//         case 'serviceHistory':
+//           alert('Service history section clicked!');
+//           break;
+//         case 'profileSettings':
+//           alert('Profile settings section clicked!');
+//           break;
+//         default:
+//           break;
+//       }
+//     }
+//   };
+
+//   const handlePopupSave = async (charge) => {
+//     try {
+//       await axios.post(`${server}/api/mechanics/updateCharge`, {
+//         mechanicId,
+//         charge,
+//       });
+//       setShowServiceChargePopup(false); // Close the service charge popup
+//       setShowMap(true); // Show the map after the popup is saved
+//       setShowNewMap(false); // Ensure new map component is hidden
+//     } catch (error) {
+//       console.error('Error updating charge:', error);
+//     }
+//   };
+
+//   return (
+//     <div className="min-h-screen bg-slate-50">
+//       <MechanicNav socket={socket} mechanicId={mechanicId} />
+//       <main className="container mx-auto p-8">
+//         {!showNewMap && !showMap && !showRequestPopup && !showServiceChargePopup && (
+//           <>
+//             <section className="bg-white p-6 rounded-lg shadow-lg mb-8">
+//               <h2 className="text-2xl font-bold text-gray-700 mb-4">Welcome, Mechanic!</h2>
+//               <p className="text-gray-600">Here you can manage your services, view requests, and update your profile.</p>
+//             </section>
+//             <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+//               <div className="bg-white p-4 rounded-lg shadow-md" onClick={() => handleSectionClick('currentRequests')}>
+//                 <h3 className="text-xl font-semibold text-gray-700 mb-2">Current Requests</h3>
+//                 <p className="text-gray-600">View and manage your current service requests.</p>
+//               </div>
+//               <div className="bg-white p-4 rounded-lg shadow-md" onClick={() => handleSectionClick('serviceHistory')}>
+//                 <h3 className="text-xl font-semibold text-gray-700 mb-2">Service History</h3>
+//                 <p className="text-gray-600">Check your past service records.</p>
+//               </div>
+//               <div className="bg-white p-4 rounded-lg shadow-md" onClick={() => handleSectionClick('profileSettings')}>
+//                 <h3 className="text-xl font-semibold text-gray-700 mb-2">Profile Settings</h3>
+//                 <p className="text-gray-600">Update your profile information and preferences.</p>
+//               </div>
+//             </section>
+//           </>
+//         )}
+//         {showMap && (
+//           <section className="bg-white p-6 rounded-lg shadow-lg mb-8">
+//             <h2 className="text-2xl font-bold text-gray-700 mb-4">Current Requests</h2>
+//             <MechanicMapComponent socket={socket} />
+//           </section>
+//         )}
+//         {showRequestPopup && requestData && (
+//           <div className="popup-container bg-white p-6 rounded-lg shadow-lg">
+//             <h3 className="text-lg font-semibold mb-4">New Request from {requestData.CfirstName}</h3>
+//             <p>Vehicle Type: {requestData.vehicleType}</p>
+//             <p>Problem Description: {requestData.description}</p>
+//             <div className="flex justify-end mt-4">
+//               <button
+//                 className="bg-red-500 text-white px-4 py-2 rounded mr-2"
+//                 onClick={() => handleRequestDecision(false)} // Decline
+//               >
+//                 Decline
+//               </button>
+//               <button
+//                 className="bg-green-500 text-white px-4 py-2 rounded"
+//                 onClick={() => handleRequestDecision(true)} // Accept
+//               >
+//                 Accept
+//               </button>
+//             </div>
+//           </div>
+//         )}
+//         {showServiceChargePopup && (
+//           <PopupForm
+//             onClose={() => setShowServiceChargePopup(false)}
+//             onSave={handlePopupSave}
+//           />
+//         )}
+//         {showNewMap && (
+//           <section className="bg-white p-6 rounded-lg shadow-lg mb-8">
+//             <h2 className="text-2xl font-bold text-gray-700 mb-4">Customer and Mechanic Locations</h2>
+//             <NewMechanicMapComponent 
+//               serviceId={requestData.serviceId} 
+//               mechanicId={mechanicId} 
+//               customerId={requestData.customerId} 
+//               socket={socket} 
+//             />
+//           </section>
+//         )}
+//       </main>
+//     </div>
+//   );
+// };
+
+// export default MechanicPage;
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import React, { useEffect, useRef, useState } from 'react';
@@ -3224,7 +3434,21 @@ const MechanicPage = () => {
         console.error('Error accepting request:', error);
       }
     } else {
-      setShowMap(true);  // Show the map again after declining
+      try {
+        // Send the decline request to the backend
+        await axios.post(`${server}/api/services/decline`, {
+          serviceId: requestData.serviceId,
+          mechanicId,
+          customerId: requestData.customerId,
+        });
+
+        // Show the map again after declining the request
+        setShowMap(true); 
+        setShowNewMap(false);
+        setShowServiceChargePopup(false);
+      } catch (error) {
+        console.error('Error declining request:', error);
+      }
     }
   };
 

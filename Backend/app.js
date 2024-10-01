@@ -410,6 +410,39 @@ app.post('/api/services/accept', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error', details: error.message });
   }
 });
+app.post('/api/services/decline', async (req, res) => {
+  const { serviceId, mechanicId, customerId } = req.body;
+  console.log("serviceid"+serviceId);
+  try {
+    const service = await Service.findByIdAndUpdate(
+      serviceId,
+      { status: 'declined' }, 
+      { new: true }
+    );
+
+    if (!service) {
+      return res.status(404).json({ message: 'Service request not found' });
+    }
+
+    // Notify the customer of the acceptance
+    const customer = await Customer.findById(customerId);
+    if (!customer) {
+      return res.status(404).json({ message: 'Customer not found' });
+    }
+
+    // Send notification to the customer
+    io.to(customer.socketId).emit('requestDeclined', {
+      serviceId,
+      mechanicId,
+      message: 'Your request has been Declined by the mechanic.',
+    });
+
+    res.status(200).json({ message: 'Request declined successfully', service });
+  } catch (error) {
+    console.error('Error declining service request:', error.message);
+    res.status(500).json({ error: 'Internal Server Error', details: error.message });
+  }
+});
 
 app.post('/api/customers/updateLocation', async (req, res) => {
   const { customerId, latitude, longitude } = req.body;
