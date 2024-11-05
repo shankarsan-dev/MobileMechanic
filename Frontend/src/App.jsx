@@ -9,18 +9,20 @@ import CustomerLogin from "./CustomerLogin";
 import CustomerNav from "./CustomerNav";
 import CustomerPage from "./CustomerPage";
 import CustomerProfile from "./CustomerProfile";
+import CustomerProfileSettings from "./CustomerProfileSettings";
+import CustomerServiceHistory from "./CustomerServiceHistory";
 import CustomerSignup from "./CustomerSignup";
 import MapComponent from "./MapComponent";
 import MechanicLogin from "./MechanicLogin";
 import MechanicNav from "./MechanicNav";
 import MechanicPage from "./MechanicPage";
 import MechanicProfile from "./MechanicProfile";
+import MechanicServiceHistory from "./MechanicServiceHistory";
 import MechanicSignup from "./MechanicSignup";
 import NewMapComponent from "./NewMapComponent";
 import PendingMechanics from "./PendingMechanics";
 import Role from "./Role";
 import ServiceStatus from "./ServiceStatus";
-
 
 const App = () => {
 
@@ -112,8 +114,19 @@ const App = () => {
     },
     {
       path: "/admin/pending-mechanics",
-
       element: <><AdminNav/><PendingMechanics/></>
+    },
+    {
+      path: "/customer-page/history",
+      element: <><CustomerNav/><CustomerServiceHistory/></>
+    },
+    {
+      path: "/customer/profile/settings",
+      element: <><CustomerNav/><CustomerProfileSettings/></>
+    },
+    {
+      path: "/mechanic-page/history",
+      element: <><MechanicNav/><MechanicServiceHistory/></>
     },
   ]);
 

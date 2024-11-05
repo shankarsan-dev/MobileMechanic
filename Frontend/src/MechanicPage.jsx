@@ -3344,12 +3344,12 @@
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import React, { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import io from 'socket.io-client';
 import MechanicMapComponent from './MechanicMapComponent';
 import MechanicNav from './MechanicNav';
 import NewMechanicMapComponent from './NewMechanicMapComponent';
 import PopupForm from './PopupForm';
-
 const server = 'http://localhost:5000';
 const socket = io(server);
 
@@ -3451,8 +3451,9 @@ const MechanicPage = () => {
       }
     }
   };
-
+  const navigate = useNavigate();
   const handleSectionClick = (section) => {
+    
     if (verificationStatus === 'pending') {
       alert('Not verified');
     } else {
@@ -3464,10 +3465,11 @@ const MechanicPage = () => {
           setShowNewMap(false); // Ensure new map component is hidden
           break;
         case 'serviceHistory':
-          alert('Service history section clicked!');
+            navigate('/mechanic-page/history');
+    
           break;
         case 'profileSettings':
-          alert('Profile settings section clicked!');
+          navigate("/mechanic-page/profile");
           break;
         default:
           break;
@@ -3495,22 +3497,22 @@ const MechanicPage = () => {
       <main className="container mx-auto p-8">
         {!showNewMap && !showMap && !showRequestPopup && !showServiceChargePopup && (
           <>
-            <section className="bg-white p-6 rounded-lg shadow-lg mb-8">
-              <h2 className="text-2xl font-bold text-gray-700 mb-4">Welcome, Mechanic!</h2>
-              <p className="text-gray-600">Here you can manage your services, view requests, and update your profile.</p>
-            </section>
+         
             <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <div className="bg-white p-4 rounded-lg shadow-md" onClick={() => handleSectionClick('currentRequests')}>
-                <h3 className="text-xl font-semibold text-gray-700 mb-2">Current Requests</h3>
+              <div className="bg-white p-4 rounded-lg shadow-md hover:bg-red-300" onClick={() => handleSectionClick('currentRequests')} >
+                <img src="src\assets\working.png" alt="" />
+                <h3 className="text-xl font-semibold text-gray-700 mb-2 ">Current Requests</h3>
                 <p className="text-gray-600">View and manage your current service requests.</p>
               </div>
-              <div className="bg-white p-4 rounded-lg shadow-md" onClick={() => handleSectionClick('serviceHistory')}>
+              <div className="bg-white p-4 rounded-lg shadow-md  hover:bg-red-300" onClick={() => handleSectionClick('serviceHistory')}>
+              <img src="\src\assets\service.png" alt="" />
                 <h3 className="text-xl font-semibold text-gray-700 mb-2">Service History</h3>
                 <p className="text-gray-600">Check your past service records.</p>
               </div>
-              <div className="bg-white p-4 rounded-lg shadow-md" onClick={() => handleSectionClick('profileSettings')}>
-                <h3 className="text-xl font-semibold text-gray-700 mb-2">Profile Settings</h3>
-                <p className="text-gray-600">Update your profile information and preferences.</p>
+              <div className="bg-white p-4 rounded-lg shadow-md  hover:bg-red-300" onClick={() => handleSectionClick('profileSettings')}>
+                <img src="src\assets\profile.png" alt="" />
+                <h3 className="text-xl font-semibold text-gray-700 mb-2  hover:bg-red-300">Profile</h3>
+                <p className="text-gray-600">Your profile information.</p>
               </div>
             </section>
           </>

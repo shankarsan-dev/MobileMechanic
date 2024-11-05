@@ -896,12 +896,14 @@ import { jwtDecode } from 'jwt-decode'; // Removed curly braces around jwtDecode
 
 // export default CustomerPage;
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import io from 'socket.io-client';
 import CustomerNav from './CustomerNav';
 import MapComponent from './MapComponent';
 
 const server = 'http://localhost:5000';
 const socket = io(server);
+
 
 const CustomerPage = () => {
   const [latitude, setLatitude] = useState(null);
@@ -989,7 +991,13 @@ const CustomerPage = () => {
     localStorage.removeItem('token');
     // Optionally redirect to login page
   };
-
+  const navigate = useNavigate();
+  const handleHistoryClick = () => {
+    navigate('/customer-page/history');
+  };
+  const handleProfileClick = () => {
+    navigate('/customer-page/profile');
+  };
   return (
     <div className="min-h-screen bg-slate-50">
       <CustomerNav onLogout={handleLogout} />
@@ -1009,15 +1017,15 @@ const CustomerPage = () => {
                 <h3 className="text-xl font-semibold text-gray-700 mb-2">Find a Mechanic</h3>
                 <p className="text-gray-600">Search for nearby mechanics and request services.</p>
               </div>
-              <div className="bg-white p-4 rounded-lg shadow-md hover:bg-red-300 max-w-screen-md">
+              <div className="bg-white p-4 rounded-lg shadow-md hover:bg-red-300 max-w-screen-md" onClick={handleHistoryClick}>
                 <img src="src\assets\service.png" alt="" />
                 <h3 className="text-xl font-semibold text-gray-700 mb-2">Request History</h3>
                 <p className="text-gray-600">Check your past service requests.</p>
               </div>
-              <div className="bg-white p-4 rounded-lg shadow-md hover:bg-red-300 max-w-screen-md">
-                <img src="src\assets\profile-setting.png" alt="" />
-                <h3 className="text-xl font-semibold text-gray-700 mb-2 ">Profile Settings</h3>
-                <p className="text-gray-600">Update your profile information and preferences.</p>
+              <div className="bg-white p-4 rounded-lg shadow-md hover:bg-red-300 max-w-screen-md" onClick={handleProfileClick}>
+                <img src="src\assets\profile.png" alt="" />
+                <h3 className="text-xl font-semibold text-gray-700 mb-2 ">Profile</h3>
+                <p className="text-gray-600"> Your profile information.</p>
               </div>
             </section>
           </>

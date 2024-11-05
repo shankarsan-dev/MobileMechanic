@@ -55,15 +55,65 @@ mongoose.connect('mongodb://127.0.0.1:27017/mobileMechanic', {
   // });
 app.use('/api/customers', customerRoutes);
 app.use('/api/mechanics', mechanicRoutes);
+app.get('/api/mechanics/services/:id', async (req, res) => {
+  try {
+    console.log(req.params.id);
+    const service = await Service.find({mechanicId:req.params.id}).populate('customerId','firstName lastName phoneNumber') // Populate customer details
+    .populate('mechanicId', 'firstName lastName'); // Populate mechanic details;
+    if (!service) return res.status(404).json({ message: 'Service not found' });
 
-// app.use("/api/requests",serviceRoutes);
-// Backend route to update mechanic's location
-// In your backend (Node.js/Express)
-// Route to get mechanic location
-// Fetch all customers
-// GET route to get mechanic verification status
+    // res.json({ message: 'services fetched' })
+    res.json(service);
+    console.log(service)
+    
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+app.put("/api/customers/profile/:customerId", async (req, res) => {
+  try {
+    const { firstName, lastName, email, phoneNumber, password } = req.body;
+    console.log("customerId: "+ customerId);
 
-// Assuming you're using express and have your Mechanic model imported
+    // Fetch customer by ID
+    const customer = await Customer.findById(req.params.customerId);
+    if (!customer) {
+      
+      return res.status(404).json({ message: 'Customer not found' });
+    }
+
+    // Update the customer's profile fields
+    customer.firstName = firstName;
+    customer.lastName = lastName;
+    customer.email = email;
+    customer.phoneNumber = phoneNumber;
+
+    // If password is provided, update it (with encryption)
+    if (password) {
+      const salt = await bcrypt.genSalt(10);
+      customer.password = await bcrypt.hash(password, salt);
+    }
+
+    await customer.save();
+    res.json({ message: 'Profile updated successfully' });
+  } catch (err) {
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+app.get('/api/customers/services/:id', async (req, res) => {
+  try {
+    console.log(req.params.id);
+    const service = await Service.find({customerId:req.params.id}).populate('customerId', 'firstName lastName') // Populate customer details
+    .populate('mechanicId', 'firstName lastName phoneNumber'); // Populate mechanic details;
+    if (!service) return res.status(404).json({ message: 'Service not found' });
+
+    // res.json({ message: 'services fetched' })
+    res.json(service);
+    
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
 app.put('/api/admin/mechanics/approve/:id', async (req, res) => {
   try {
     const mechanicId = req.params.id;
@@ -119,6 +169,7 @@ app.delete('/api/admin/services/:id', async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
+
 
 app.get('/api/admin/customers/all',protectAdmin, async (req, res) => {
   try {
