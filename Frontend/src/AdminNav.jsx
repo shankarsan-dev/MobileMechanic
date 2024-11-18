@@ -24,11 +24,6 @@ const AdminNav = () => {
         <nav>
           <ul className="flex space-x-4">
             <li onClick={() => navigate('/admin-dashboard')} className="hover:text-gray-200 cursor-pointer">Home</li>
-            <li>Mechanic Details</li>
-             <li>Customer Details</li>
-             <li>Service Details</li>
-
-            <li  className="hover:text-gray-200 cursor-pointer">Profile</li>
             <li onClick={handleLogoutClick} className="hover:text-gray-200 cursor-pointer">Logout</li>
           </ul>
         </nav>

@@ -55,11 +55,31 @@ mongoose.connect('mongodb://127.0.0.1:27017/mobileMechanic', {
   // });
 app.use('/api/customers', customerRoutes);
 app.use('/api/mechanics', mechanicRoutes);
+app.get('/api/mechanics/:mechanicId/average-rating', async (req, res) => {
+  try {
+    const mechanicId = req.params.mechanicId;
+    console.log("mechanic id: " + mechanicId);
+    
+    // Fetch all ratings for the mechanic
+    const ratings = await Rating.find({ mechanicId: mechanicId }); // Assuming mechanicId is stored as a string
+
+    // Calculate the average rating
+    const averageRating = ratings.length > 0 
+      ? ratings.reduce((sum, rating) => sum + rating.rating, 0) / ratings.length 
+      : 0; // No ratings found
+
+    return res.json({ averageRating });
+  } catch (error) {
+    console.error('Error fetching average rating:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
 app.get('/api/mechanics/services/:id', async (req, res) => {
   try {
     console.log(req.params.id);
     const service = await Service.find({mechanicId:req.params.id}).populate('customerId','firstName lastName phoneNumber') // Populate customer details
     .populate('mechanicId', 'firstName lastName'); // Populate mechanic details;
+    
     if (!service) return res.status(404).json({ message: 'Service not found' });
 
     // res.json({ message: 'services fetched' })

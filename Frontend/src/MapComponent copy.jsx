@@ -1315,3 +1315,4 @@ const MapComponent = ({ socket, latitude, longitude, mechanics, vehicleType, des
 };
 
 export default MapComponent;
+

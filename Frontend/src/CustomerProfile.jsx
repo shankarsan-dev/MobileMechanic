@@ -229,13 +229,12 @@ const DisplayProfile = () => {
         <section className="bg-white p-6 rounded-lg shadow-lg text-center max-w-lg w-full">
           <h2 className="text-2xl font-bold text-gray-700 mb-4">Profile Information</h2>
           <div className="flex flex-col items-center mb-4">
-            {profile.profilePicture && (
+           
               <img
-                src={profile.profilePicture}
+                src="\src\assets\profile.png"
                 alt="Profile"
                 className="w-32 h-32 rounded-full object-cover mb-4"
               />
-            )}
             <div className='text-center'>
               <p className="text-gray-700 font-bold text-xl">{profile.firstName} {profile.lastName}</p>
               <p className="text-gray-700">Email: {profile.email}</p>
